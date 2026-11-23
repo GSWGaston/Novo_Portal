@@ -7,7 +7,23 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-poppins), "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  /* Facta portal design tokens */
+  --color-ink: #0b1f4d;
+  --color-ink-soft: #4b5b7c;
+  --color-navy: #052a66;
+  --color-brand: #0b5fe0;
+  --color-brand-dark: #0847b0;
+  --color-brand-soft: #e8f0ff;
+  --color-line: #e1e9f6;
+  --color-surface: #f3f7ff;
+  --color-danger: #e5391f;
+  --color-danger-soft: #fdeceb;
+  --color-warn: #f08a00;
+  --color-warn-soft: #fff3df;
+  --color-ok: #17a05d;
+  --color-ok-soft: #e4f7ec;
+  --shadow-card: 0 1px 2px rgba(11, 31, 77, 0.04), 0 8px 24px -8px rgba(11, 60, 150, 0.14);
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -117,49 +133,9 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* Font Awesome 4.7 (same icon font the source portal uses) — only the glyphs the clone needs */
-@font-face {
-  font-family: "FontAwesome";
-  src: url("/sites/facta/fonts/fontawesome-webfont.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
-}
-
-.fa {
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-}
-.fa-search:before { content: "\f002"; }
-.fa-headphones:before { content: "\f025"; }
-.fa-calendar:before { content: "\f073"; }
-.fa-bar-chart:before { content: "\f080"; }
-.fa-cogs:before { content: "\f085"; }
-.fa-thumbs-o-up:before { content: "\f087"; }
-.fa-thumbs-o-down:before { content: "\f088"; }
-.fa-th:before { content: "\f00a"; }
-.fa-user:before { content: "\f007"; }
-.fa-bullhorn:before { content: "\f0a1"; }
-.fa-users:before { content: "\f0c0"; }
-.fa-bell:before { content: "\f0f3"; }
-.fa-exchange:before { content: "\f0ec"; }
-.fa-dashboard:before { content: "\f0e4"; }
-.fa-folder-open-o:before { content: "\f115"; }
-.fa-flag-o:before { content: "\f11d"; }
-.fa-line-chart:before { content: "\f201"; }
-.fa-caret-down:before { content: "\f0d7"; }
-.fa-cog:before { content: "\f013"; }
-.fa-info-circle:before { content: "\f05a"; }
-.fa-arrow-left:before { content: "\f060"; }
-.fa-arrow-right:before { content: "\f061"; }
-.fa-file-excel-o:before { content: "\f1c3"; }
-.fa-sort-alpha-asc:before { content: "\f15d"; }
-
-@keyframes facta-bar-in {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+@keyframes facta-pop {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: none; }
 }
 
 @layer base {

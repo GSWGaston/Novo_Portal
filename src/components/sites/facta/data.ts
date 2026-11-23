@@ -1,93 +1,230 @@
-// Dados fictícios: o portal real mostra chamados e nomes de funcionários, que não são copiados.
+// Todos os dados são fictícios; o usuário real vem da sessão quando houver backend.
+
+export const currentUser = { name: "Usuário Demo", first: "Usuário", initials: "UD" };
 
 export type PortalApp = {
   title: string;
-  icon: string;
-  color: string;
-  gradient?: string;
+  description: string;
+  icon: "calendar" | "cogs" | "headset" | "users" | "trend" | "bars";
+  tone: "red" | "blue" | "green" | "purple" | "orange" | "indigo" | "cyan" | "violet";
   href: string;
 };
 
 export const portalApps: PortalApp[] = [
-  { title: "Agenda Comercial", icon: "fa-calendar", color: "#ff002e", gradient: "linear-gradient(230deg, #ffd6db, #ff4961)", href: "#" },
-  { title: "Solicitações", icon: "fa-cogs", color: "#1e9ff2", gradient: "linear-gradient(230deg, #bce2fb, #1e9ff2)", href: "/solicitacoes" },
-  { title: "Prospecção Ativa de Clientes", icon: "fa-headphones", color: "#28d094", gradient: "linear-gradient(230deg, #bff1df, #28d094)", href: "#" },
-  { title: "RH", icon: "fa-users", color: "#9c27b0", href: "#" },
-  { title: "CIPA 2026", icon: "fa-line-chart", color: "#ff9149", href: "#" },
-  { title: "Pesquisa de Clima 2023", icon: "fa-line-chart", color: "#666ee8", href: "#" },
-  { title: "Avaliação de Desempenho", icon: "fa-bar-chart", color: "#00bcd4", href: "#" },
-  { title: "Pesquisa FIA", icon: "fa-bar-chart", color: "#00bcd4", href: "#" },
-  { title: "Resultados Pesquisa de Clima GPTW", icon: "fa-line-chart", color: "#666ee8", href: "#" },
+  { title: "Agenda Comercial", description: "Compromissos, visitas e agenda da equipe comercial.", icon: "calendar", tone: "red", href: "#" },
+  { title: "Solicitações", description: "Abertura e acompanhamento de chamados internos.", icon: "cogs", tone: "blue", href: "/solicitacoes" },
+  { title: "Prospecção Ativa de Clientes", description: "Gestão e acompanhamento de prospecções.", icon: "headset", tone: "green", href: "#" },
+  { title: "RH", description: "Serviços, documentos e solicitações de Recursos Humanos.", icon: "users", tone: "purple", href: "#" },
+  { title: "CIPA 2026", description: "Informações, documentos e ações da CIPA.", icon: "trend", tone: "orange", href: "#" },
+  { title: "Pesquisa de Clima 2023", description: "Resultados e análises da pesquisa de clima.", icon: "trend", tone: "indigo", href: "#" },
+  { title: "Avaliação de Desempenho", description: "Acompanhamento de metas e avaliações.", icon: "bars", tone: "cyan", href: "#" },
+  { title: "Pesquisa FIA", description: "Participação e resultados da Pesquisa FIA.", icon: "bars", tone: "cyan", href: "#" },
+  { title: "Resultados Pesquisa de Clima GPTW", description: "Resultados e indicadores da pesquisa GPTW.", icon: "trend", tone: "violet", href: "#" },
 ];
 
-export type NavMenu = { label: string; icon?: string; href?: string; items?: { label: string; href: string }[] };
+export type Announcement = {
+  id: string;
+  /** "urgent" abre como popup; "info" fica integrado na página. */
+  level: "urgent" | "info";
+  tag: string;
+  title: string;
+  text: string;
+  highlight?: string;
+  facts?: { label: string; value: string }[];
+};
 
-export const navMenus: NavMenu[] = [
-  { label: "Dashboard", icon: "fa-dashboard", href: "/solicitacoes" },
+export const announcements: Announcement[] = [
   {
-    label: "Solicitações",
-    icon: "fa-th",
-    items: [
-      { label: "Nova Solicitação", href: "#" },
-      { label: "Pendentes do Setor", href: "/solicitacoes/setores" },
-      { label: "Meus Atendimentos", href: "#" },
-      { label: "Minhas Solicitações", href: "#" },
-      { label: "Diário de Solicitações", href: "#" },
+    id: "doacao-sangue",
+    level: "urgent",
+    tag: "Comunicado urgente",
+    title: "Doação de Sangue",
+    text: "A Facta, em parceria com o Hemocentro/RS, realizará uma ação de doação de sangue para nossos colaboradores. Sua solidariedade pode salvar vidas!",
+    highlight: "Hoje é o último dia para as inscrições! Inscrições até às 12h00.",
+    facts: [
+      { label: "Data da doação", value: "24/11" },
+      { label: "Horários", value: "09h00 e 14h00" },
+      { label: "Local", value: "Recepção do RH" },
     ],
   },
-  { label: "Relatórios", icon: "fa-th", items: [{ label: "Satisfação", href: "#" }, { label: "Estatísticas", href: "#" }, { label: "Ramais", href: "#" }] },
-  { label: "Diversos", icon: "fa-th", items: [] },
-  { label: "Recursos Humanos", icon: "fa-th", items: [] },
-  { label: "Ajuda", icon: "fa-th", items: [] },
-  { label: "Código de Ética e Conduta", icon: "fa-th", items: [] },
-  { label: "Repositório", icon: "fa-th", items: [] },
+  {
+    id: "manutencao-portal",
+    level: "info",
+    tag: "Comunicado interno",
+    title: "Nova versão do portal",
+    text: "O portal ganhou um visual novo. Se algo não estiver onde você esperava, abra um chamado em Solicitações.",
+    facts: [{ label: "Versão", value: "v2.4.0" }],
+  },
 ];
 
-export const reasons = [
-  { label: "COMPUTADOR – MANUTENÇÃO", value: 62, color: "#7cb5ec" },
-  { label: "COMPUTADOR – LENTIDÃO", value: 28, color: "#434348" },
-  { label: "COMPUTADOR – NOVO", value: 4, color: "#90ed7d" },
-  { label: "MONITOR – MANUTENÇÃO", value: 2, color: "#f7a35c" },
-  { label: "TELEFONIA – OUTROS ASSUNTOS", value: 1, color: "#8085e9" },
-  { label: "WINDOWS – TROCA DE VERSÃO", value: 1, color: "#f15c80" },
+export const navMenus: { label: string; href?: string; items?: { label: string; href: string }[] }[] = [
+  { label: "Dashboard", href: "/solicitacoes" },
+  {
+    label: "Solicitações",
+    items: [
+      { label: "Nova solicitação", href: "#" },
+      { label: "Pendentes do setor", href: "/solicitacoes/setores" },
+      { label: "Meus atendimentos", href: "#" },
+      { label: "Minhas solicitações", href: "#" },
+      { label: "Diário de solicitações", href: "#" },
+    ],
+  },
+  { label: "Relatórios", items: [{ label: "Satisfação", href: "#" }, { label: "Estatísticas", href: "#" }, { label: "Ramais", href: "#" }] },
+  { label: "Diversos", items: [] },
+  { label: "Recursos Humanos", items: [] },
+  { label: "Ajuda", items: [] },
+  { label: "Código de Ética e Conduta", href: "#" },
+  { label: "Repositório", items: [] },
 ];
 
-export const attentionTickets = [
-  { code: 1000101, status: "AGUARDANDO SOLICITANTE", reason: "COMPUTADOR – LENTIDÃO", last: "05/07/2023", days: 1200 },
-  { code: 1000102, status: "AGUARDANDO SOLICITANTE", reason: "COMPUTADOR – LENTIDÃO", last: "06/07/2023", days: 1199 },
-  { code: 1000103, status: "AGUARDANDO SOLICITANTE", reason: "COMPUTADOR – MANUTENÇÃO", last: "14/07/2023", days: 1191 },
-  { code: 1000104, status: "AGUARDANDO SOLICITANTE", reason: "COMPUTADOR – MANUTENÇÃO", last: "15/07/2023", days: 1190 },
+export const notifications = [
+  { id: 1, title: "Chamado #1000201 foi atualizado", when: "há 5 min" },
+  { id: 2, title: "Chamado #1000202 aguarda sua validação", when: "há 1 h" },
+  { id: 3, title: "Nova versão do portal disponível", when: "ontem" },
 ];
 
-export const stats = [
-  { key: "open", label: "EM ABERTO", icon: "fa-folder-open-o", color: "#ffa31a", value: 96, ticket: 1000090, days: 410 },
-  { key: "pending", label: "PENDENTE", icon: "fa-thumbs-o-down", color: "#b0587f", value: 4, ticket: 1000091, days: 120 },
-  { key: "dev", label: "EM DESENVOLVIMENTO", icon: "fa-exchange", color: "#4a8bc9", value: 2, ticket: 1000092, days: 35 },
-  { key: "done", label: "CONCLUÍDO", icon: "fa-thumbs-o-up", color: "#4d8a31", value: 1500, ticket: 1000093, days: 180 },
+/* ---------- Dashboard ---------- */
+
+export type Scope = "individual" | "setor";
+
+export const dashboardByScope: Record<
+  Scope,
+  { open: number; pending: number; dev: number; done: number; deltas: [number, number, number, number]; reasons: { label: string; value: number }[] }
+> = {
+  individual: {
+    open: 140, pending: 32, dev: 28, done: 96, deltas: [12, -18, -7, 20],
+    reasons: [
+      { label: "Acesso a sistemas", value: 42 },
+      { label: "Equipamentos (hardware)", value: 28 },
+      { label: "E-mails e contas", value: 18 },
+      { label: "Impressoras", value: 12 },
+      { label: "Outros", value: 8 },
+    ],
+  },
+  setor: {
+    open: 412, pending: 87, dev: 64, done: 305, deltas: [5, -9, 3, 14],
+    reasons: [
+      { label: "Acesso a sistemas", value: 120 },
+      { label: "Equipamentos (hardware)", value: 96 },
+      { label: "E-mails e contas", value: 71 },
+      { label: "Impressoras", value: 44 },
+      { label: "Outros", value: 31 },
+    ],
+  },
+};
+
+export const urgentTicket = {
+  code: 1000123,
+  priority: "Alta",
+  text: "Computador da loja apresentando lentidão ao abrir o sistema. Solicita verificação do equipamento e atualização da ferramenta de acesso remoto.",
+  sector: "Suporte Informática",
+  opened: "13/07/2023 (850 dias)",
+};
+
+export const idleTickets = [
+  { code: 1000101, text: "Aguardando retorno do solicitante", days: 8 },
+  { code: 1000102, text: "Aguardando retorno do solicitante", days: 9 },
+  { code: 1000103, text: "Aguardando retorno do solicitante", days: 12 },
 ];
 
-export type SectorTicket = {
+/* ---------- Chamados do setor ---------- */
+
+export type Priority = "Baixa" | "Média" | "Alta";
+export type Status = "Em desenvolvimento" | "Pendente validação";
+
+export type Ticket = {
   code: number;
-  priority: "Baixa" | "Média";
-  reason: string;
-  subreason: string;
-  uf: string;
+  title: string;
+  subtitle: string;
+  priority: Priority;
+  status: Status;
   origin: string;
   requester: string;
   owner: string;
-  requested: string;
+  uf: string;
   updated: string;
+  opened: string;
   days: number;
-  status: string;
+  firstMessage: string;
+  lastMessage: string;
 };
 
-export const sectorTickets: SectorTicket[] = [
-  { code: 1000201, priority: "Baixa", reason: "COMPUTADOR – MANUTENÇÃO", subreason: "", uf: "RS", origin: "ADMINISTRATIVO", requester: "SOLICITANTE EXEMPLO UM", owner: "USUÁRIO DEMO", requested: "18/11/2026 08:57:05", updated: "23/11/2026 13:57:17", days: 4, status: "EM DESENVOLVIMENTO" },
-  { code: 1000202, priority: "Baixa", reason: "COMPUTADOR – MANUTENÇÃO", subreason: "SUBSTITUICAO POR DEFEITO", uf: "RS", origin: "FINANCEIRO", requester: "SOLICITANTE EXEMPLO DOIS", owner: "USUÁRIO DEMO", requested: "29/10/2026 09:43:36", updated: "23/11/2026 13:53:46", days: 17, status: "EM DESENVOLVIMENTO" },
-  { code: 1000203, priority: "Baixa", reason: "COMPUTADOR – MANUTENÇÃO", subreason: "LENTIDÃO", uf: "RS", origin: "APOIO JURIDICO", requester: "SOLICITANTE EXEMPLO TRÊS", owner: "", requested: "11/11/2026 08:58:06", updated: "23/11/2026 13:46:49", days: 9, status: "PENDENTE VALIDAÇÃO" },
-  { code: 1000204, priority: "Baixa", reason: "COMPUTADOR – MANUTENÇÃO", subreason: "MANUTENÇÃO", uf: "RS", origin: "LOJA CENTRO/RS", requester: "SOLICITANTE EXEMPLO QUATRO DA SILVA", owner: "", requested: "23/11/2026 10:11:07", updated: "23/11/2026 13:04:26", days: 1, status: "PENDENTE VALIDAÇÃO" },
-  { code: 1000205, priority: "Baixa", reason: "COMPUTADOR – LENTIDÃO", subreason: "LENTIDÃO", uf: "ES", origin: "LOJA VILA – ES", requester: "SOLICITANTE EXEMPLO CINCO", owner: "", requested: "23/11/2026 08:55:11", updated: "23/11/2026 12:41:27", days: 1, status: "PENDENTE VALIDAÇÃO" },
-  { code: 1000206, priority: "Média", reason: "COMPUTADOR – MANUTENÇÃO", subreason: "AUMENTO", uf: "RS", origin: "DEMANDAS REGULATÓRIAS", requester: "SOLICITANTE EXEMPLO SEIS", owner: "", requested: "19/11/2026 08:06:53", updated: "23/11/2026 12:37:22", days: 3, status: "PENDENTE VALIDAÇÃO" },
-  { code: 1000207, priority: "Baixa", reason: "COMPUTADOR – MANUTENÇÃO", subreason: "NOVO", uf: "RS", origin: "MONITORIA E ANALISE DE DESEMPENHO", requester: "SOLICITANTE EXEMPLO SETE", owner: "ATENDENTE EXEMPLO", requested: "19/11/2026 09:18:06", updated: "23/11/2026 12:28:39", days: 3, status: "EM DESENVOLVIMENTO" },
-  { code: 1000208, priority: "Baixa", reason: "COMPUTADOR – LENTIDÃO", subreason: "CRIAÇÃO STATUS ANÁLISE", uf: "RS", origin: "CONTROLADORIA", requester: "SOLICITANTE EXEMPLO OITO", owner: "", requested: "17/11/2026 11:23:58", updated: "23/11/2026 12:22:10", days: 5, status: "PENDENTE VALIDAÇÃO" },
-];
+const titles = [
+  ["Computador – Manutenção", "Formatação do computador"],
+  ["Computador – Manutenção", "Instalação de software de controle"],
+  ["Computador – Lentidão", "Lentidão no sistema"],
+  ["Computador – Manutenção", "Monitoria e análise de desempenho"],
+  ["Computador – Manutenção", "Substituição de periférico"],
+  ["Computador – Manutenção", "Instalação de impressora de rede"],
+  ["Acesso a sistemas", "Liberação de acesso"],
+  ["E-mail – Caixa cheia", "Aumento de caixa"],
+] as const;
+const origins = ["Facta Financeira", "Apoio Jurídico", "Loja São José – SC", "Administrativo", "Loja Santa Rosa", "Recursos Humanos", "Informática", "Controladoria"];
+const people = ["Solicitante Exemplo Um", "Solicitante Exemplo Dois", "Solicitante Exemplo Três", "Solicitante Exemplo Quatro", "Solicitante Exemplo Cinco", "Solicitante Exemplo Seis"];
+const ufs = ["RS", "RS", "SC", "RS", "PR", "ES", "RS", "RJ"];
+
+export const tickets: Ticket[] = Array.from({ length: 32 }, (_, i) => {
+  const [title, subtitle] = titles[i % titles.length];
+  const status: Status = i % 3 === 0 ? "Em desenvolvimento" : "Pendente validação";
+  const priority: Priority = i % 11 === 4 ? "Alta" : i % 5 === 2 ? "Média" : "Baixa";
+  const day = 23 - (i % 12);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return {
+    code: 1000201 + i,
+    title,
+    subtitle,
+    priority,
+    status,
+    origin: origins[i % origins.length],
+    requester: people[i % people.length],
+    owner: status === "Em desenvolvimento" ? currentUser.name : i % 4 === 1 ? "Atendente Exemplo" : "",
+    uf: ufs[i % ufs.length],
+    updated: `${pad(day)}/11/2026 ${pad(8 + (i % 9))}:${pad((i * 7) % 60)}`,
+    opened: `${pad(Math.max(1, day - 4 - (i % 5)))}/11/2026 ${pad(8 + (i % 6))}:${pad((i * 13) % 60)}`,
+    days: 1 + (i * 3) % 19,
+    firstMessage: "Boa tarde! Preciso de ajuda com este equipamento, quando seria possível o atendimento?",
+    lastMessage:
+      status === "Em desenvolvimento"
+        ? "O equipamento foi encaminhado e está em processo de atendimento. Previsão de conclusão: hoje, até o final do dia."
+        : "Atendimento concluído. Aguardando a validação do solicitante para encerrar o chamado.",
+  };
+});
+
+/* ---------- Histórico do chamado (dados fictícios) ---------- */
+
+export type HistoryEntry = {
+  id: string;
+  kind: "message" | "note" | "system";
+  author: string;
+  role: "Solicitante" | "Suporte" | "Sistema";
+  when: string;
+  text: string;
+};
+
+const initials = (name: string) =>
+  name
+    .split(" ")
+    .filter((p) => p.length > 2)
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+export { initials };
+
+export function historyFor(t: Ticket): HistoryEntry[] {
+  const day = t.opened.slice(0, 10);
+  const hour = (h: number, m: number) => `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  const h0 = Number(t.opened.slice(11, 13));
+  const support = t.owner || "Atendente Exemplo";
+  const list: HistoryEntry[] = [
+    { id: "1", kind: "message", author: t.requester, role: "Solicitante", when: `${day} às ${hour(h0, 5)}`, text: t.firstMessage },
+    { id: "2", kind: "system", author: "Sistema", role: "Sistema", when: `${day} às ${hour(h0, 6)}`, text: `Chamado aberto por ${t.requester} via Portal, com prioridade ${t.priority}.` },
+    { id: "3", kind: "note", author: support, role: "Suporte", when: `${day} às ${hour(h0 + 1, 12)}`, text: "Acompanhamento interno: chamado visualizado e equipamento verificado remotamente. Aguardando janela de atendimento." },
+    { id: "4", kind: "message", author: support, role: "Suporte", when: `${day} às ${hour(h0 + 2, 30)}`, text: "Olá! Analisamos o caso e vamos dar sequência ao atendimento. Retornamos em breve com novidades." },
+    { id: "5", kind: "message", author: support, role: "Suporte", when: t.updated.replace(" ", " às "), text: t.lastMessage },
+  ];
+  if (t.status === "Pendente validação") {
+    list.push({ id: "6", kind: "system", author: "Sistema", role: "Sistema", when: t.updated.replace(" ", " às "), text: "Status do chamado alterado para: Pendente validação." });
+  }
+  return list;
+}
