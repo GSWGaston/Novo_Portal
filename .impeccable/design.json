@@ -1,0 +1,379 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-24T20:30:32.664438+00:00",
+  "title": "Design System: Portal Interno Facta",
+  "extensions": {
+    "colorMeta": {
+      "brand-blue": {
+        "role": "primary",
+        "displayName": "Azul Facta",
+        "canonical": "#0b5fe0",
+        "tonalRamp": [
+          "#052b65",
+          "#073b8b",
+          "#094aaf",
+          "#0b5fe0",
+          "#3c7fe6",
+          "#79a7ee",
+          "#b6cff6",
+          "#e2ecfb"
+        ]
+      },
+      "brand-blue-deep": {
+        "role": "primary",
+        "displayName": "Azul Facta Profundo",
+        "canonical": "#0847b0",
+        "tonalRamp": [
+          "#04204f",
+          "#052c6d",
+          "#063789",
+          "#0847b0",
+          "#396cc0",
+          "#779ad4",
+          "#b5c8e7",
+          "#e1e9f6"
+        ]
+      },
+      "brand-blue-mist": {
+        "role": "primary",
+        "displayName": "Névoa Azul",
+        "canonical": "#e8f0ff",
+        "tonalRamp": [
+          "#686c73",
+          "#90959e",
+          "#b5bbc7",
+          "#e8f0ff",
+          "#edf3ff",
+          "#f2f7ff",
+          "#f8faff",
+          "#fcfdff"
+        ]
+      },
+      "harbor-navy": {
+        "role": "secondary",
+        "displayName": "Azul Marinho do Porto",
+        "canonical": "#052a66",
+        "tonalRamp": [
+          "#02132e",
+          "#031a3f",
+          "#042150",
+          "#052a66",
+          "#375585",
+          "#768aab",
+          "#b4bfd1",
+          "#e1e5ed"
+        ]
+      },
+      "alert-red": {
+        "role": "tertiary",
+        "displayName": "Vermelho de Alerta",
+        "canonical": "#e5391f",
+        "tonalRamp": [
+          "#671a0e",
+          "#8e2313",
+          "#b32c18",
+          "#e5391f",
+          "#ea614c",
+          "#f19284",
+          "#f7c4bc",
+          "#fce7e4"
+        ]
+      },
+      "amber": {
+        "role": "tertiary",
+        "displayName": "Âmbar",
+        "canonical": "#f08a00",
+        "tonalRamp": [
+          "#6c3e00",
+          "#955600",
+          "#bb6c00",
+          "#f08a00",
+          "#f3a133",
+          "#f7bf73",
+          "#fadcb2",
+          "#fdf1e0"
+        ]
+      },
+      "go-green": {
+        "role": "tertiary",
+        "displayName": "Verde de Sucesso",
+        "canonical": "#17a05d",
+        "tonalRamp": [
+          "#0a482a",
+          "#0e633a",
+          "#127d49",
+          "#17a05d",
+          "#45b37d",
+          "#7fcba6",
+          "#b9e2ce",
+          "#e3f4ec"
+        ]
+      },
+      "person-violet": {
+        "role": "tertiary",
+        "displayName": "Violeta de Pessoa",
+        "canonical": "#6a3fc9",
+        "tonalRamp": [
+          "#301c5a",
+          "#42277d",
+          "#53319d",
+          "#6a3fc9",
+          "#8865d4",
+          "#ad95e1",
+          "#d2c5ef",
+          "#ede8f9"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#0b1f4d",
+        "tonalRamp": [
+          "#050e23",
+          "#071330",
+          "#09183c",
+          "#0b1f4d",
+          "#3c4c71",
+          "#79849d",
+          "#b6bcca",
+          "#e2e4ea"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Tinta Suave",
+        "canonical": "#4b5b7c",
+        "tonalRamp": [
+          "#222938",
+          "#2e384d",
+          "#3a4761",
+          "#4b5b7c",
+          "#6f7c96",
+          "#9ca5b7",
+          "#c9ced8",
+          "#e9ebef"
+        ]
+      },
+      "ice-surface": {
+        "role": "neutral",
+        "displayName": "Superfície Gelo",
+        "canonical": "#f3f7ff",
+        "tonalRamp": [
+          "#6d6f73",
+          "#97999e",
+          "#bec1c7",
+          "#f3f7ff",
+          "#f5f9ff",
+          "#f8fbff",
+          "#fbfdff",
+          "#fefeff"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Fio",
+        "canonical": "#e1e9f6",
+        "tonalRamp": [
+          "#65696f",
+          "#8c9099",
+          "#b0b6c0",
+          "#e1e9f6",
+          "#e7edf8",
+          "#eef3fa",
+          "#f6f8fc",
+          "#fbfcfe"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "page-title": {
+        "displayName": "Título de página",
+        "purpose": "Único uso do peso 800 fora dos números de resumo."
+      },
+      "section-title": {
+        "displayName": "Título de seção",
+        "purpose": "Cartões e blocos."
+      },
+      "body": {
+        "displayName": "Corpo",
+        "purpose": "Texto corrido e botões principais."
+      },
+      "interface": {
+        "displayName": "Interface",
+        "purpose": "Tabelas, campos, tags e texto secundário."
+      },
+      "label": {
+        "displayName": "Rótulo",
+        "purpose": "Metadados e cabeçalhos de tabela."
+      },
+      "kpi": {
+        "displayName": "Número de resumo",
+        "purpose": "Indicadores do dashboard."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 1px 2px rgba(11,31,77,0.04), 0 8px 24px -8px rgba(11,60,150,0.14)",
+        "purpose": "Cartões de seção."
+      },
+      {
+        "name": "floating",
+        "value": "0 12px 32px -8px rgba(11,31,77,0.25)",
+        "purpose": "Dropdown, calendário e submenus."
+      },
+      {
+        "name": "menu",
+        "value": "0 16px 40px -12px rgba(5,42,102,0.35)",
+        "purpose": "Painéis dos menus da barra superior."
+      },
+      {
+        "name": "popup",
+        "value": "0 40px 100px -20px rgba(0,0,0,0.5)",
+        "purpose": "Comunicados e modais."
+      }
+    ],
+    "motion": [
+      {
+        "name": "pop",
+        "value": "facta-pop .25s ease-out",
+        "purpose": "Entrada de popups e modais."
+      },
+      {
+        "name": "reorder",
+        "value": "260ms",
+        "purpose": "Reordenação de chamados fixados (FLIP)."
+      },
+      {
+        "name": "colors",
+        "value": "150ms",
+        "purpose": "Hover e estados de tags e botões."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "2xl",
+        "value": "1536px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação principal da tela (Salvar, Nova reserva).",
+      "html": "<button class=\"ds-btn-primary\">Salvar</button>",
+      "css": ".ds-btn-primary{font-family:'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;height:44px;padding:0 24px;border:0;border-radius:12px;background:#0b5fe0;color:#fff;font-size:16px;font-weight:700;cursor:pointer;transition:background .15s}.ds-btn-primary:hover{background:#0847b0}.ds-btn-primary:focus-visible{outline:2px solid #0b5fe0;outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação de apoio ao lado da principal (Fechar, Limpar).",
+      "html": "<button class=\"ds-btn-secondary\">Fechar</button>",
+      "css": ".ds-btn-secondary{font-family:'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;height:44px;padding:0 20px;border:1px solid #e1e9f6;border-radius:12px;background:#fff;color:#0b1f4d;font-size:16px;font-weight:700;cursor:pointer}.ds-btn-secondary:hover{background:#f3f7ff}.ds-btn-secondary:focus-visible{outline:2px solid #0b5fe0;outline-offset:2px}"
+    },
+    {
+      "name": "Navy Search Button",
+      "kind": "button",
+      "refersTo": "button-navy",
+      "description": "Pesquisar nas telas de consulta.",
+      "html": "<button class=\"ds-btn-navy\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m20 20-3.5-3.5\"/></svg> Pesquisar</button>",
+      "css": ".ds-btn-navy{font-family:'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 24px;border:0;border-radius:12px;background:#052a66;color:#fff;font-size:14px;font-weight:700;cursor:pointer}.ds-btn-navy:hover{background:#0b1f4d}.ds-btn-navy:focus-visible{outline:2px solid #0b5fe0;outline-offset:2px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo de texto com rótulo acima.",
+      "html": "<label class=\"ds-field\"><span>Título</span><input placeholder=\"Parte do título\"></label>",
+      "css": ".ds-field{display:block;font-family:'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;font-size:14px;font-weight:600;color:#0b1f4d}.ds-field span{display:block;margin-bottom:4px}.ds-field input{box-sizing:border-box;width:100%;height:44px;padding:0 12px;border:1px solid #e1e9f6;border-radius:12px;background:#fff;color:#0b1f4d;font:400 14px 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;outline:none}.ds-field input:focus{border-color:#0b5fe0;box-shadow:0 0 0 4px rgba(11,95,224,.15)}"
+    },
+    {
+      "name": "Section Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Cartão de seção com título e conteúdo.",
+      "html": "<section class=\"ds-card\"><h3>Chamados urgentes</h3><p>Conteúdo do bloco.</p></section>",
+      "css": ".ds-card{font-family:'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;padding:24px;border:1px solid #fff;border-radius:24px;background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(11,31,77,.04),0 8px 24px -8px rgba(11,60,150,.14);color:#0b1f4d}.ds-card h3{margin:0;font-size:20px;font-weight:700}.ds-card p{margin:8px 0 0;font-size:14px;color:#4b5b7c}"
+    },
+    {
+      "name": "Action Tag",
+      "kind": "chip",
+      "refersTo": "tag-action",
+      "description": "Tag clicável que copia um dado (e-mail, ramal).",
+      "html": "<button class=\"ds-tag\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m3 7 9 6 9-6\"/></svg> ana.exemplo@exemplo.com.br</button>",
+      "css": ".ds-tag{font-family:'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:4px 10px;border:0;border-radius:8px;background:#e8f0ff;color:#0b5fe0;font-size:14px;cursor:pointer;transition:background .15s}.ds-tag:hover{background:rgba(11,95,224,.15)}.ds-tag:focus-visible{outline:2px solid #0b5fe0;outline-offset:2px}"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "custom",
+      "refersTo": "button-navy",
+      "description": "Seletor de poucas opções (Todos / Matriz / Loja).",
+      "html": "<div class=\"ds-seg\"><button class=\"on\">Todos</button><button>Matriz</button><button>Loja</button></div>",
+      "css": ".ds-seg{display:inline-flex;gap:4px;padding:4px;border:1px solid #e1e9f6;border-radius:16px;background:#fff}.ds-seg button{font-family:'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;height:44px;padding:0 20px;border:0;border-radius:12px;background:transparent;color:#4b5b7c;font-size:14px;font-weight:700;cursor:pointer}.ds-seg button:hover{background:#e8f0ff;color:#0b1f4d}.ds-seg button.on{background:#052a66;color:#fff}"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Balcão de Atendimento",
+    "overview": "O portal é o balcão de informações da empresa: tudo à mão, sem manual de instruções. O colaborador chega com uma tarefa curta, e a tela mostra o que ele veio fazer sem passos extras. A atmosfera é clara e arejada, com tom confiável e corporativo: o azul da marca como âncora e o azul-marinho na estrutura.",
+    "keyCharacteristics": [
+      "Fundo claro com gradiente radial suave em azul-gelo; cartões brancos com sombra difusa azulada.",
+      "Azul para ação, azul-marinho para estrutura, vermelho/âmbar/verde para estado, violeta para pessoa.",
+      "Uma só família tipográfica (Plus Jakarta Sans) numa escala fixa.",
+      "Componentes arredondados, calmos e previsíveis.",
+      "Alvos de toque de 44px, foco visível e movimento com alternativa de reduzir."
+    ],
+    "rules": [
+      {
+        "name": "The Color Means Something Rule",
+        "body": "Cada cor carrega um significado fixo; nenhuma é usada só para enfeitar.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink On Wash Rule",
+        "body": "A cor cheia serve para ícones, pontos e preenchimentos; texto sobre fundo suave usa a variante -ink.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fixed Scale Rule",
+        "body": "Só existem os tamanhos 12, 14, 16, 18, 20 e 32 (mais 34 no número de resumo e 44 na saudação).",
+        "section": "typography"
+      },
+      {
+        "name": "The Quiet Surface Rule",
+        "body": "Em repouso, um bloco tem borda fina e no máximo a sombra de cartão; sombra forte só no que flutua.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do usar os tokens (brand, ink, line…) em vez de hex soltos.",
+      "Do manter o mesmo padrão para o mesmo tipo de coisa: lista, filtro, dropdown, data, cartão e modal têm um só componente.",
+      "Do usar texto -ink sobre fundos suaves de estado.",
+      "Do manter 44px de alvo de toque e foco visível, e tratar prefers-reduced-motion.",
+      "Do mostrar 'Em breve' e desativar o que ainda não existe.",
+      "Do deixar a profundidade nos cartões e nos painéis flutuantes, e mais nada."
+    ],
+    "donts": [
+      "Don't usar <select> ou <input type=\"date\"> nativos.",
+      "Don't usar gradientes decorativos nem barras coloridas nas laterais de blocos.",
+      "Don't usar cor só para enfeitar: cada uma tem significado fixo.",
+      "Don't criar tamanhos de fonte fora da escala fixa.",
+      "Don't passar dados de exemplo por conteúdo oficial.",
+      "Don't deixar um botão que parece funcionar e não faz nada."
+    ]
+  }
+}

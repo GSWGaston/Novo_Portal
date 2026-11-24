@@ -39,7 +39,7 @@ Todos definidos em `src/app/globals.css` (bloco `@theme inline`). **Use os token
 | `danger` / `danger-soft` / `danger-ink` | `#e5391f` / `#fdeceb` / `#b3200f` | Urgente, erro, prioridade Alta |
 | `warn` / `warn-soft` / `warn-ink` | `#f08a00` / `#fff3df` / `#8f5200` | Atenção, prioridade Média, "Pendente validação", item fixado |
 | `ok` / `ok-soft` / `ok-ink` | `#17a05d` / `#e4f7ec` / `#0c6e3d` | Sucesso, prioridade Baixa, variação positiva |
-| `user` | `#6a3fc9` | Tag de usuário (pessoa) |
+| `user` | `#6a3fc9` | Reserva do calendário (roxo); a tag de pessoa no histórico usa o âmbar suave |
 
 **Regra de contraste:** a cor "cheia" (`danger`, `warn`, `ok`) serve para ícones, pontos e preenchimentos. **Texto** sobre fundo suave usa sempre a variante `-ink` (`text-danger-ink` sobre `bg-danger-soft`). Texto pequeno precisa de 4,5:1; ícones e controles, 3:1.
 
@@ -86,7 +86,7 @@ Os componentes ficam em `src/components/sites/facta/`.
 - **Botão principal:** `h-11` ou `h-12`, `rounded-xl bg-brand text-white font-bold hover:bg-brand-dark`. **Secundário:** `border border-line bg-white font-bold hover:bg-brand-soft`. **Desativado:** `disabled:opacity-60` e `cursor-not-allowed`, com `title` explicando.
 - **Campos:** `h-11 rounded-xl border-line bg-white px-3 text-[14px]`, foco `focus:border-brand focus:ring-4 focus:ring-brand/15`. Rótulo sempre visível acima; placeholder é exemplo, não rótulo.
 - **Selos (pílulas):** `rounded-full px-3 py-1 text-[14px] font-bold`, fundo `-soft` + texto `-ink` + ícone/ponto na cor cheia. Já existem `StatusPill` e `PriorityPill` (exportados de `tickets-view.tsx`): reutilize.
-- **Tags de autoria (histórico):** pessoa = fundo `user` + texto branco + ícone de pessoa; sistema = fundo `navy` + texto branco + ícone de engrenagem + rótulo "SISTEMA".
+- **Tags de autoria (histórico):** pessoa = fundo `warn-soft` + texto `warn-ink` + anel `warn` a 25% + ícone de pessoa; sistema = fundo `navy` + texto branco + ícone de engrenagem + rótulo "SISTEMA".
 - **Tabela de dados:** cabeçalho `bg-surface` com texto 12–14px; linhas com `border-b border-line` ou zebra `even:bg-surface/60`; células sem quebra de linha (`whitespace-nowrap`), `px-2.5`; colunas secundárias vão como segunda linha menor dentro da mesma célula (ex.: origem sob o solicitante). Coluna de ações na esquerda.
 - **Lista de chamados:** busca + "Busca exata" (botão que alterna, `aria-pressed`) + "Filtros" na barra azul-marinho; filtros comuns à vista e o resto atrás de "Mais filtros"; chips dos filtros aplicados com "Limpar todos"; paginação no rodapé.
 - **Item fixado:** fundo `warn-soft` a 50% + faixa de 3px interna à esquerda; sobe para o topo da lista. Alça de arrastar flutua à esquerda só ao passar o mouse (sempre visível em toque).
@@ -158,3 +158,59 @@ Os componentes ficam em `src/components/sites/facta/`.
 6. Movimento só quando explica algo e com versão reduzida?
 7. Texto em pt-BR consistente com os termos acima?
 8. `npm run check` passa; 1440px e 375px sem rolagem horizontal inesperada.
+
+---
+
+## 9. Padrão de formulário (tela "Nova solicitação", `/solicitacoes/nova`)
+
+- Estrutura: migalhas de pão → h1 32px com ícone + frase de apoio ("Os campos com * são obrigatórios.") → grade de cartões (dados principais à esquerda, complementos à direita em 440px) → cartão de descrição → ações alinhadas à direita (Voltar secundário, Salvar principal).
+- Campos com rótulo visível, `*` em `text-danger-ink` (`aria-hidden`), ajuda em 12px, erro em 14px abaixo do campo e borda `danger`. Validação só ao salvar: resumo `role="alert"` ("Há N campos para corrigir.") e foco no primeiro campo com erro.
+- Opções curtas e exclusivas (área de atendimento) como botões-rádio nativos estilizados (`has-[:checked]`); campos dependentes ficam desativados até serem aplicáveis (Loja/UF só para "Loja").
+- Anexos: zona de soltar + botão "Selecionar arquivos" (alvo de 44px), lista com nome, tamanho e remover.
+- Sucesso: cartão central com confirmação e próximos passos; nesta demonstração nada é enviado.
+
+---
+
+## 10. Listas de registros (`data-list.tsx`) e abas
+
+- Para qualquer lista nova (Minhas solicitações, Histórico, etc.) use o componente genérico **`DataList`** em vez de copiar a tela de chamados: ele traz busca, botão de alternância opcional (ex.: "Mostrar concluídas"), painel de filtros (principais + "Mais filtros"), chips, ordenação, tabela, estado vazio e paginação, já no padrão visual do portal.
+- Você só descreve as **colunas** (`Col`), os **filtros** (`FilterDef`, com a função `test`) e os textos. Colunas secundárias vão como segunda linha menor da mesma célula; coluna de texto longo usa `className="!whitespace-normal min-w-[280px]"`.
+- `StatusPill` aceita qualquer status conhecido (Em desenvolvimento, Pendente validação, Aguardando solicitante, Concluído – confirmação); para um status novo, acrescente-o em `statusStyle` (ícone + tom suave/escuro).
+- **Abas (segmented control):** um grupo `role="tablist"` com fundo branco, borda `line` e a aba ativa em `bg-navy text-white`, 44px de altura; texto de apoio logo abaixo. Use abas quando duas listas respondem à mesma pergunta (ex.: Histórico = chamados atendidos | minhas interações) em vez de duas entradas de menu.
+- Itens do menu Solicitações: Nova solicitação, Pendentes do setor, Minhas solicitações, Histórico.
+
+---
+
+## 11. Diretório de pessoas em cartões (`ramais-view.tsx`, `/diversos/colaboradores`)
+
+- Quando o conteúdo é "encontrar uma pessoa" e não "comparar colunas", use cartões em vez de tabela: grade `sm:2 / xl:3 / 2xl:4` colunas, `gap-5`, cartão `rounded-3xl` com sombra suave.
+- Cartão **leve e baixo** (~130px): `rounded-2xl border border-line bg-white p-4 shadow-sm`, sem blocos escuros. Anatomia: avatar de iniciais de 40px (primeira letra do primeiro e do último nome, sem contorno) + nome (16px, 700, truncado com tooltip) + cargo (14px); **ramal à direita** em 20px/700 com ícone de telefone e botão de copiar; linha divisória fina; setor como ícone + texto simples (sem cápsula); e-mail em uma linha com `truncate` + tooltip e botão de copiar. A data de atualização vai em tooltip no ramal, não ocupa linha.
+- Os dois botões de copiar têm exatamente o mesmo estilo. No máximo uma forma arredondada por função (cartão, avatar, botão); evite caixas dentro de caixas.
+- Busca ao vivo (sem botão "Pesquisar"), filtro rápido em controle segmentado (Todos / Matriz / Loja) e filtros avançados (setor, período) num painel; contagem em `aria-live`; "Mostrar mais (N restantes)" em vez de paginação numérica; confirmação de cópia em balão azul-marinho.
+- Informação ausente é dita ("Ramal não informado"), nunca deixada em branco.
+
+## 12. Dropdowns (select)
+
+- Nunca usar `<select>` nativo: usar `Select` de `src/components/sites/facta/select.tsx`.
+- Gatilho com a altura dos campos (44px), seta que gira ao abrir; painel claro (`rounded-2xl border border-line bg-white`, sombra suave) ancorado ao gatilho, abre para cima se faltar espaço.
+- Barra de pesquisa aparece sozinha com mais de 6 opções (`searchable` força/oculta). Opção `value: ""` serve como "limpar" ("Selecione", "Todos…").
+- Teclado: setas, Home/End, Enter escolhe, Esc fecha e devolve o foco, Tab fecha. Alvos de 44px em toque.
+
+## 13. Datas
+
+- Nunca usar `<input type="date">`: usar `DatePicker` (`date-picker.tsx`), mesmo valor ISO `aaaa-mm-dd`. Gatilho igual ao dropdown, calendário em painel claro: mês/ano em caixa alta com setas, dias da semana D S T Q Q S S, hoje com contorno azul, selecionado preenchido de azul, rodapé "Limpar" / "Hoje". Teclado: setas, PageUp/PageDown (mês), Home/End, Esc.
+
+## 14. Menu superior
+
+- Estrutura em `navMenus` (`data.ts`): `MenuItem` com `items` aninhados; `href: "#"` marca telas ainda não feitas (`soon()`).
+- Desktop: painel do menu e, ao lado, submenu lateral (abre ao passar o mouse ou clicar), alinhado ao topo do painel, linha única, rolagem se passar da tela. Mobile: chips dos menus e lista abaixo com grupos expansíveis.
+
+## 15. Calendário / agenda
+
+- `calendar-view.tsx`: cartão do calendário (toolbar: anterior/próximo, Hoje, título, segmentado Mês/Semana/Dia) + coluna lateral de 360px com "Próximo compromisso" e "Compromissos do dia". Eventos usam 5 cores do sistema (azul, verde, laranja, vermelho, roxo) como chip suave; hoje = círculo azul; dia selecionado = fundo e anel azuis.
+- Cadastro em modal (mesmo padrão do popup do painel): título, descrição, horário (Select), data (DatePicker), cor e período (Semanal … Nenhum). Dados ficam no `localStorage` (demo).
+
+## 16. Reservas de salas
+
+- `reservas-view.tsx`: seletor segmentado Reuniões/Treinamentos (mesmo estilo de Todos/Matriz/Loja) + abas Cadastro/Atualização, Próximas e Anteriores. Pesquisa por data e sala, tabela com Ativo (pílula) e ações Editar/Cancelar, modal "Nova reserva" com bloqueio de conflito de horário. Dados no `localStorage` (demo).
+- `aniversarios-view.tsx`: barra navy com mês (setas + Select), busca e segmentado Matriz/Loja; cards compactos com dia/semana, nome e setor.

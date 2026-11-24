@@ -40,7 +40,7 @@ export function LoginForm() {
           value={user}
           onChange={(e) => setUser(e.target.value)}
           placeholder="Digite seu usuário"
-          className="w-full bg-transparent text-[16px] text-ink outline-none placeholder:text-ink-soft/80"
+          className="w-full bg-transparent text-[16px] text-ink outline-none placeholder:text-ink-mute"
         />
       </div>
 
@@ -56,7 +56,7 @@ export function LoginForm() {
           value={pass}
           onChange={(e) => setPass(e.target.value)}
           placeholder="Digite sua senha"
-          className="w-full bg-transparent text-[16px] text-ink outline-none placeholder:text-ink-soft/80"
+          className="w-full bg-transparent text-[16px] text-ink outline-none placeholder:text-ink-mute"
         />
         <button type="button" onClick={() => setShow((s) => !s)} aria-label={show ? "Ocultar senha" : "Mostrar senha"} className="text-ink hover:text-brand">
           {show ? <EyeOff className="size-5" /> : <Eye className="size-5" />}

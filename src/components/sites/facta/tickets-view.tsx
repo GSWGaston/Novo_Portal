@@ -3,6 +3,7 @@
 import {
   ArrowUpDown,
   Check,
+  Clock,
   GripVertical,
   Pin,
   ChevronDown,
@@ -23,6 +24,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { DatePicker } from "./date-picker";
+import { Select } from "./select";
 import { Breadcrumb } from "./dashboard-view";
 import { tickets, type Ticket } from "./data";
 
@@ -56,20 +59,21 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function Pick({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: string[] }) {
   return (
-    <select value={value} onChange={(e) => onChange(e.target.value)} className={cn(input, "text-ink-soft")}>
-      <option value="">Selecione</option>
-      {options.map((o) => (
-        <option key={o}>{o}</option>
-      ))}
-    </select>
+    <Select value={value} onChange={onChange} options={[{ value: "", label: "Selecione" }, ...options]} />
   );
 }
 
-export function StatusPill({ s }: { s: Ticket["status"] }) {
-  const dev = s === "Em desenvolvimento";
-  const Icon = dev ? RefreshCw : Hourglass;
+const statusStyle: Record<string, { icon: typeof Check; tone: string }> = {
+  "Em desenvolvimento": { icon: RefreshCw, tone: "bg-brand-soft text-brand" },
+  "Pendente validação": { icon: Hourglass, tone: "bg-warn-soft text-warn-ink" },
+  "Aguardando solicitante": { icon: Clock, tone: "bg-warn-soft text-warn-ink" },
+  "Concluído – confirmação": { icon: Check, tone: "bg-ok-soft text-ok-ink" },
+};
+
+export function StatusPill({ s }: { s: string }) {
+  const { icon: Icon, tone } = statusStyle[s] ?? { icon: RefreshCw, tone: "bg-surface text-ink-soft" };
   return (
-    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1 text-[14px] font-bold", dev ? "bg-brand-soft text-brand" : "bg-warn-soft text-warn-ink")}>
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1 text-[14px] font-bold", tone)}>
       <Icon className="size-3.5" /> {s}
     </span>
   );
@@ -244,8 +248,8 @@ export function TicketsView() {
               <Field label="Status"><Pick value={draft.status} onChange={(v) => setDraft({ ...draft, status: v })} options={uniq("status")} /></Field>
               <Field label="Prioridade"><Pick value={draft.priority} onChange={(v) => setDraft({ ...draft, priority: v })} options={["Baixa", "Média", "Alta"]} /></Field>
               <Field label="Responsável"><Pick value={draft.owner} onChange={(v) => setDraft({ ...draft, owner: v })} options={uniq("owner")} /></Field>
-              <Field label="Alterado de"><input type="date" className={input} value={draft.from} onChange={(e) => setDraft({ ...draft, from: e.target.value })} /></Field>
-              <Field label="Alterado até"><input type="date" className={input} value={draft.to} onChange={(e) => setDraft({ ...draft, to: e.target.value })} /></Field>
+              <Field label="Alterado de"><DatePicker value={draft.from} onChange={(v) => setDraft({ ...draft, from: v })} aria-label="Alterado de" /></Field>
+              <Field label="Alterado até"><DatePicker value={draft.to} onChange={(v) => setDraft({ ...draft, to: v })} aria-label="Alterado até" /></Field>
             </div>
             {more && (
               <div className="mt-5 grid gap-x-5 gap-y-5 sm:grid-cols-2 lg:grid-cols-5">
@@ -446,9 +450,7 @@ export function TicketsView() {
             ))}
             <button type="button" disabled={cur === pages} onClick={() => setPage(cur + 1)} className="flex h-10 coarse:h-11 items-center gap-1 rounded-xl border border-line bg-white px-3 text-[14px] disabled:opacity-40">Próxima página <ChevronRight className="size-4" /></button>
             <label className="ml-3 flex items-center gap-2 text-[14px]">Exibir
-              <select value={size} onChange={(e) => { setSize(Number(e.target.value)); setPage(1); }} className="h-10 coarse:h-11 rounded-xl border border-line bg-white px-2 font-semibold">
-                {[10, 30, 50].map((n) => <option key={n} value={n}>{n} por página</option>)}
-              </select>
+              <Select value={String(size)} onChange={(v) => { setSize(Number(v)); setPage(1); }} options={[10, 30, 50].map((n) => ({ value: String(n), label: `${n} por página` }))} aria-label="Itens por página" className="h-10 coarse:h-11 w-auto min-w-[9.5rem] px-3 font-semibold" />
             </label>
           </div>
         </footer>

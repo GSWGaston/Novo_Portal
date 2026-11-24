@@ -3,7 +3,6 @@
 import {
   Calendar,
   Check,
-  ChevronDown,
   Cog,
   Headset,
   Mail,
@@ -20,12 +19,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Select } from "./select";
 import { Breadcrumb } from "./dashboard-view";
 import { currentUser, historyFor, initials, loginOf, type HistoryEntry, type Priority, type Status, type Ticket } from "./data";
 import { PriorityPill, StatusPill } from "./tickets-view";
 
 const card = "rounded-3xl border border-white bg-white/90 shadow-card";
-const field = "h-11 w-full rounded-xl border border-line bg-white px-3 text-[14px] font-semibold outline-none focus:border-brand";
 
 function Side({ icon: Icon, title, children }: { icon: typeof User; title: string; children: React.ReactNode }) {
   return (
@@ -161,7 +160,7 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
                   {shown.map((e) => (
                     <tr key={e.id} className={cn("border-t border-line even:bg-surface/60", e.id === fresh && "[animation:facta-flash_1.6s_ease-out]")}>
                       <td className="whitespace-nowrap px-5 py-4 align-middle">
-                        <span className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-bold", e.auto ? "bg-navy text-white" : "bg-user text-white")}>
+                        <span className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-bold", e.auto ? "bg-navy text-white" : "bg-warn-soft text-warn-ink ring-1 ring-warn/25")}>
                           {e.auto ? <Cog className="size-3.5" /> : <User className="size-3.5" />}
                           {e.auto ? "SISTEMA" : e.user}
                         </span>
@@ -193,13 +192,9 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
               <h2 className="flex items-center gap-2.5 text-[20px] font-bold">
                 <Reply className="size-6 text-brand" /> Responder chamado
               </h2>
-              <label className="relative block">
-                <select value={replyAs} onChange={(e) => setReplyAs(e.target.value as "message" | "note")} className={cn(field, "appearance-none pr-9")}>
-                  <option value="message">Resposta ao solicitante</option>
-                  <option value="note">Acompanhamento interno</option>
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2" />
-              </label>
+              <div className="min-w-[250px]">
+                <Select value={replyAs} onChange={(v) => setReplyAs(v as "message" | "note")} aria-label="Tipo de registro" className="font-semibold text-ink" options={[{ value: "message", label: "Resposta ao solicitante" }, { value: "note", label: "Acompanhamento interno" }]} />
+              </div>
             </div>
             <textarea value={reply} onChange={(e) => setReply(e.target.value)} rows={5} placeholder="Digite sua resposta aqui..." className="mt-4 w-full resize-y rounded-2xl border border-line bg-white p-4 text-[16px] outline-none focus:border-brand" />
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -216,28 +211,18 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
         <aside className="space-y-6">
           <Side icon={Cog} title="Gerenciar chamado">
             <div className="space-y-4 text-[14px] font-bold">
-              <label className="block">
-                Status
-                <select value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as Status })} className={cn(field, "mt-1")}>
-                  <option>Em desenvolvimento</option>
-                  <option>Pendente validação</option>
-                </select>
-              </label>
-              <label className="block">
-                Responsável
-                <select value={draft.owner} onChange={(e) => setDraft({ ...draft, owner: e.target.value })} className={cn(field, "mt-1")}>
-                  <option>{currentUser.name}</option>
-                  <option>Atendente Exemplo</option>
-                </select>
-              </label>
-              <label className="block">
-                Prioridade
-                <select value={draft.priority} onChange={(e) => setDraft({ ...draft, priority: e.target.value as Priority })} className={cn(field, "mt-1")}>
-                  <option>Baixa</option>
-                  <option>Média</option>
-                  <option>Alta</option>
-                </select>
-              </label>
+              <div>
+                <span id="g-status">Status</span>
+                <Select aria-labelledby="g-status" value={draft.status} onChange={(v) => setDraft({ ...draft, status: v as Status })} className="mt-1 font-semibold text-ink" options={["Em desenvolvimento", "Pendente validação", "Aguardando solicitante", "Concluído – confirmação"]} />
+              </div>
+              <div>
+                <span id="g-owner">Responsável</span>
+                <Select aria-labelledby="g-owner" value={draft.owner} onChange={(v) => setDraft({ ...draft, owner: v })} className="mt-1 font-semibold text-ink" options={[currentUser.name, "Atendente Exemplo"]} />
+              </div>
+              <div>
+                <span id="g-priority">Prioridade</span>
+                <Select aria-labelledby="g-priority" value={draft.priority} onChange={(v) => setDraft({ ...draft, priority: v as Priority })} className="mt-1 font-semibold text-ink" options={["Baixa", "Média", "Alta"]} />
+              </div>
               <button type="button" onClick={save} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[16px] font-bold text-white transition hover:bg-brand-dark">
                 <Save className="size-4" /> Salvar alterações
               </button>

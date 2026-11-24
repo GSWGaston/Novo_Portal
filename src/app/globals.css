@@ -171,3 +171,30 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+/* Placeholders legíveis (>= 4,5:1 sobre branco). */
+@layer base {
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-ink-mute);
+    opacity: 1;
+  }
+}
+
+/* Cores suaves dos cartões de sistema da home (CSS puro, não depende da varredura do Tailwind). */
+.facta-tile-red { background-image: linear-gradient(135deg, #de5f5a, #d24c48); }
+.facta-glow-red { background-image: linear-gradient(to right, transparent, #fbeceb); }
+.facta-tile-blue { background-image: linear-gradient(135deg, #3b7fe8, #2a6ad8); }
+.facta-glow-blue { background-image: linear-gradient(to right, transparent, #e6efff); }
+.facta-tile-green { background-image: linear-gradient(135deg, #3aa676, #2d9468); }
+.facta-glow-green { background-image: linear-gradient(to right, transparent, #e3f5ec); }
+.facta-tile-purple { background-image: linear-gradient(135deg, #9558ad, #85459f); }
+.facta-glow-purple { background-image: linear-gradient(to right, transparent, #f1e7f5); }
+.facta-tile-orange { background-image: linear-gradient(135deg, #d98a30, #c97920); }
+.facta-glow-orange { background-image: linear-gradient(to right, transparent, #fcefe0); }
+.facta-tile-indigo { background-image: linear-gradient(135deg, #6b77d8, #5a66c7); }
+.facta-glow-indigo { background-image: linear-gradient(to right, transparent, #e7e9fa); }
+.facta-tile-cyan { background-image: linear-gradient(135deg, #38a2b4, #2a909f); }
+.facta-glow-cyan { background-image: linear-gradient(to right, transparent, #e0f4f7); }
+.facta-tile-violet { background-image: linear-gradient(135deg, #8269d0, #7058c0); }
+.facta-glow-violet { background-image: linear-gradient(to right, transparent, #ece8fa); }

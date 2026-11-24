@@ -57,24 +57,52 @@ export const announcements: Announcement[] = [
   },
 ];
 
-export const navMenus: { label: string; href?: string; items?: { label: string; href: string }[] }[] = [
+export type MenuItem = { label: string; href?: string; items?: MenuItem[] };
+
+const soon = (label: string): MenuItem => ({ label, href: "#" });
+
+export const navMenus: MenuItem[] = [
   { label: "Dashboard", href: "/solicitacoes" },
   {
     label: "Solicitações",
     items: [
-      { label: "Nova solicitação", href: "#" },
+      { label: "Nova solicitação", href: "/solicitacoes/nova" },
       { label: "Pendentes do setor", href: "/solicitacoes/setores" },
-      { label: "Meus atendimentos", href: "#" },
-      { label: "Minhas solicitações", href: "#" },
-      { label: "Diário de solicitações", href: "#" },
+      { label: "Minhas solicitações", href: "/solicitacoes/minhas" },
+      { label: "Histórico", href: "/solicitacoes/historico" },
     ],
   },
-  { label: "Relatórios", items: [{ label: "Satisfação", href: "#" }, { label: "Estatísticas", href: "#" }, { label: "Ramais", href: "#" }] },
-  { label: "Diversos", items: [] },
-  { label: "Recursos Humanos", items: [] },
-  { label: "Ajuda", items: [] },
-  { label: "Código de Ética e Conduta", href: "#" },
-  { label: "Repositório", items: [] },
+  { label: "Relatórios", items: [soon("Satisfação"), soon("Estatísticas")] },
+  {
+    label: "Diversos",
+    items: [
+      { label: "Reservas de Salas", href: "/diversos/reservas" },
+      { label: "Buscar Colaborador", href: "/diversos/colaboradores" },
+      { label: "Calendário de Compromissos", href: "/diversos/calendario" },
+      { label: "Relação de Aniversários", href: "/diversos/aniversarios" },
+      soon("Apoio Facta"),
+      { label: "Políticas SEGINFO", href: "/diversos/politicas" },
+      { label: "Atas de Reunião", href: "/diversos/atas" },
+      soon("Projetos"),
+      soon("Organograma Funcional"),
+    ],
+  },
+  {
+    label: "Recursos Humanos",
+    items: [
+      soon("T&D"),
+      soon("Folha Ponto"),
+      { label: "Biblioteca", items: [soon("Livros"), soon("Peça um livro")] },
+      soon("Documentos Institucionais"),
+      { label: "Programas Institucionais", items: ["Convênios", "Cidadania Empresarial", "Facta em Foco", "Facta Forma", "Feito para você"].map(soon) },
+      { label: "Formulário de Feedback", items: ["Solicitar Feedback Lojas", "Consultar Feedback Lojas", "Consultar Feedback Operacional/Adm"].map(soon) },
+      soon("Cartilha de Conduta Profissional Facta"),
+      soon("Declaração de Ciência e Concordância (Entrega de Atestado)"),
+    ],
+  },
+  { label: "Ajuda", items: [soon("FAQ"), { label: "Cadastro", items: [soon("FAQ")] }, soon("Banco de Idéias")] },
+  { label: "Código de Ética e Conduta", items: [soon("Facta Intermediação de Negócios")] },
+  { label: "Repositório", items: [soon("Pesquisa")] },
 ];
 
 export const notifications = [
@@ -130,7 +158,7 @@ export const idleTickets = [
 /* ---------- Chamados do setor ---------- */
 
 export type Priority = "Baixa" | "Média" | "Alta";
-export type Status = "Em desenvolvimento" | "Pendente validação";
+export type Status = "Em desenvolvimento" | "Pendente validação" | "Aguardando solicitante" | "Concluído – confirmação";
 
 export type Ticket = {
   code: number;
@@ -189,6 +217,48 @@ export const tickets: Ticket[] = Array.from({ length: 32 }, (_, i) => {
         : "Atendimento concluído. Aguardando a validação do solicitante para encerrar o chamado.",
   };
 });
+
+/* ---------- Minhas solicitações e histórico (dados fictícios) ---------- */
+
+const reasonsPool = ["Computador e periféricos", "Materiais de expediente", "Impressoras", "Acesso a sistemas", "E-mail – Caixa cheia", "Equipamento – Monitor"];
+const areasPool = ["Área de Suprimentos", "Administrativo – Compras", "Suporte Informática"];
+const ownersPool = ["Atendente Exemplo", "Responsável Exemplo Dois", "Responsável Exemplo Três"];
+const pad2 = (n: number) => String(n).padStart(2, "0");
+
+function makeTicket(i: number, base: number, over: Partial<Ticket>): Ticket {
+  const day = 22 - (i % 20);
+  const month = 11 - Math.floor(i / 20);
+  const y = 2026;
+  const stamp = (d: number, h: number, m: number) => `${pad2(Math.max(1, d))}/${pad2(Math.max(1, month))}/${y} ${pad2(h)}:${pad2(m)}`;
+  const reason = reasonsPool[i % reasonsPool.length];
+  return {
+    code: base + i,
+    title: reason,
+    subtitle: ["Instalação", "Substituição", "Configuração", "Verificação"][i % 4],
+    priority: i % 9 === 4 ? "Alta" : i % 4 === 1 ? "Média" : "Baixa",
+    status: "Concluído – confirmação",
+    origin: areasPool[i % areasPool.length],
+    requester: currentUser.name,
+    owner: ownersPool[i % ownersPool.length],
+    uf: "RS",
+    updated: stamp(day, 9 + (i % 8), (i * 11) % 60),
+    opened: stamp(day - 2, 8 + (i % 6), (i * 17) % 60),
+    days: 1 + (i * 2) % 14,
+    firstMessage: "Preciso de ajuda com este item. Quando seria possível o atendimento?",
+    lastMessage: "Atendimento concluído e confirmado pelo solicitante.",
+    ...over,
+  };
+}
+
+/** Chamados que o próprio usuário abriu. */
+export const myRequests: Ticket[] = Array.from({ length: 36 }, (_, i) =>
+  makeTicket(i, 1000101, i < 4 ? { status: "Em desenvolvimento", lastMessage: "O equipamento foi encaminhado e está em atendimento." } : i < 7 ? { status: "Aguardando solicitante", lastMessage: "Aguardando seu retorno para continuar o atendimento." } : i < 9 ? { status: "Pendente validação", lastMessage: "Atendimento concluído. Valide para encerrar o chamado." } : {}),
+);
+
+/** Chamados já encerrados que o usuário atendeu (somam-se aos que ele ainda atende em `tickets`). */
+export const closedByMe: Ticket[] = Array.from({ length: 14 }, (_, i) =>
+  makeTicket(i, 1000051, { requester: people[i % people.length], owner: currentUser.name, origin: origins[i % origins.length], uf: ufs[i % ufs.length] }),
+);
 
 /* ---------- Histórico do chamado (dados fictícios) ---------- */
 

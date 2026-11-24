@@ -1,17 +1,71 @@
 "use client";
 
-import { Bell, ChevronDown, LogOut, Search } from "lucide-react";
+import { Bell, ChevronDown, ChevronRight, LogOut, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Brand } from "./brand";
-import { currentUser, navMenus, notifications } from "./data";
+import { currentUser, navMenus, notifications, type MenuItem } from "./data";
 
 type Props = {
   /** "portal" é o cabeçalho alto da home; "app" traz o menu de navegação. */
   variant: "portal" | "app";
 };
+
+const hasPath = (m: MenuItem, path: string): boolean => m.href === path || !!m.items?.some((i) => hasPath(i, path));
+/** Item sem tela ainda: aparece desativado, com selo "Em breve". */
+const isSoon = (href?: string) => !href || href === "#";
+
+function MenuLeaf({ item, onGo, onEnter, mobile }: { item: MenuItem; onGo?: () => void; onEnter?: () => void; mobile?: boolean }) {
+  if (isSoon(item.href)) {
+    return (
+      <span
+        role={mobile ? undefined : "menuitem"}
+        aria-disabled="true"
+        onMouseEnter={onEnter}
+        className={cn(mobile ? "flex min-h-11 items-center justify-between gap-3 rounded-lg px-3 text-[14px] text-white/60" : "flex min-h-10 coarse:min-h-11 w-full cursor-default items-center justify-between gap-3 whitespace-nowrap rounded-xl px-3 py-2 text-left text-[14px] font-medium text-ink-soft")}
+      >
+        {item.label}
+        <span className={cn("shrink-0 rounded-md px-1.5 py-0.5 text-[12px] font-bold", mobile ? "bg-white/10 text-white/80" : "bg-surface text-ink-soft ring-1 ring-line")}>Em breve</span>
+      </span>
+    );
+  }
+  return (
+    <Link
+      href={item.href ?? "#"}
+      role={mobile ? undefined : "menuitem"}
+      onMouseEnter={onEnter}
+      onClick={onGo}
+      className={mobile ? "flex min-h-11 items-center rounded-lg px-3 text-[14px] text-white/90 hover:bg-white/10" : row}
+    >
+      {item.label}
+    </Link>
+  );
+}
+
+const row = "flex min-h-10 whitespace-nowrap coarse:min-h-11 w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-[14px] font-medium hover:bg-brand-soft";
+
+/** Submenu curto: centralizado na linha de origem, sem passar do topo/base do menu principal. */
+function CenteredFlyout({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    const row = el?.parentElement;
+    const menu = row?.parentElement;
+    if (!el || !row || !menu) return;
+    const r = row.getBoundingClientRect();
+    const m = menu.getBoundingClientRect();
+    const h = el.offsetHeight;
+    const top = Math.min(Math.max(r.top + r.height / 2 - h / 2, m.top), Math.max(m.top, m.bottom - h));
+    el.style.top = `${top - r.top}px`;
+  }, []);
+  return (
+    <div ref={ref} role="menu" className={cn(panel, "left-full mt-0 ml-[10px] w-max min-w-[200px]")}>
+      {children}
+    </div>
+  );
+}
 
 const panel =
   "absolute z-50 mt-2 rounded-2xl border border-line bg-white p-1.5 text-ink shadow-[0_16px_40px_-12px_rgba(5,42,102,0.35)]";
@@ -20,8 +74,12 @@ export function AppHeader({ variant }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState<string | null>(null);
+  const [sub, setSub] = useState<string | null>(null);
+  const [mSub, setMSub] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const ref = useRef<HTMLElement>(null);
+  const leaveTimer = useRef<number | null>(null);
+  const [hover] = useState({ pointer: "" });
   const app = variant === "app";
 
   useEffect(() => {
@@ -37,7 +95,10 @@ export function AppHeader({ variant }: Props) {
     };
   }, []);
 
-  const toggle = (key: string) => setOpen((o) => (o === key ? null : key));
+  const toggle = (key: string) => {
+    setSub(null);
+    setOpen((o) => (o === key ? null : key));
+  };
   const iconBtn = "relative flex h-10 w-10 coarse:h-11 coarse:w-11 items-center justify-center rounded-full text-white/90 transition hover:bg-white/10";
 
   return (
@@ -56,35 +117,65 @@ export function AppHeader({ variant }: Props) {
         {app && (
           <nav className="hidden flex-1 items-center gap-0.5 overflow-visible lg:flex" aria-label="Principal">
             {navMenus.map((m) => {
-              const active = m.href === pathname || m.items?.some((i) => i.href === pathname);
+              const active = hasPath(m, pathname);
               const cls = cn(
-                "flex h-10 coarse:h-11 items-center gap-1 whitespace-nowrap rounded-xl px-3.5 text-[14px] font-semibold text-white/80 transition hover:bg-white/10 hover:text-white",
+                "flex h-10 coarse:h-11 items-center gap-1 whitespace-nowrap rounded-xl px-3.5 text-[14px] font-semibold text-white transition hover:bg-white/15",
                 active && "bg-brand text-white shadow-sm hover:bg-brand",
               );
               return (
-                <div key={m.label} className="relative">
+                <div
+                  key={m.label}
+                  className="relative"
+                  onPointerEnter={(e) => {
+                    if (e.pointerType !== "mouse") return;
+                    hover.pointer = "mouse";
+                    if (leaveTimer.current) window.clearTimeout(leaveTimer.current);
+                    if (m.items?.length) {
+                      if (open !== m.label) setSub(null);
+                      setOpen(m.label);
+                    } else if (open && open !== "search" && open !== "bell" && open !== "user") setOpen(null);
+                  }}
+                  onPointerLeave={(e) => {
+                    if (e.pointerType !== "mouse") return;
+                    leaveTimer.current = window.setTimeout(() => setOpen((o) => (o === m.label ? null : o)), 160);
+                  }}
+                >
                   {m.href ? (
                     <Link href={m.href} className={cls}>
                       {m.label}
                     </Link>
                   ) : (
-                    <button type="button" className={cls} aria-expanded={open === m.label} onClick={() => toggle(m.label)}>
+                    <button type="button" className={cls} aria-expanded={open === m.label} onClick={() => (hover.pointer === "mouse" ? setOpen(m.label) : toggle(m.label))} onPointerDown={(e) => { hover.pointer = e.pointerType; }}>
                       {m.label}
                       <ChevronDown className="size-3.5 opacity-70" />
                     </button>
                   )}
                   {open === m.label && m.items && m.items.length > 0 && (
-                    <div className={cn(panel, "left-0 min-w-[210px]")}>
-                      {m.items.map((i) => (
-                        <Link
-                          key={i.label}
-                          href={i.href}
-                          onClick={() => setOpen(null)}
-                          className="block rounded-xl px-3 py-2 text-[14px] font-medium hover:bg-brand-soft"
-                        >
-                          {i.label}
-                        </Link>
-                      ))}
+                    <div className={cn(panel, "left-0 w-max min-w-[230px]")} role="menu">
+                      {m.items.map((i) =>
+                        i.items ? (
+                          <div key={i.label} className={cn(i.items.length <= 8 && "relative")} onMouseEnter={() => setSub(i.label)}>
+                            <button type="button" role="menuitem" aria-haspopup="menu" aria-expanded={sub === i.label} onClick={() => setSub(sub === i.label ? null : i.label)} className={cn(row, sub === i.label && "bg-brand-soft")}>
+                              {i.label}
+                              <ChevronRight className="size-4 shrink-0 text-ink-soft" />
+                            </button>
+                            {sub === i.label && (() => {
+                              const links = i.items.map((c) => (
+                                <MenuLeaf key={c.label} item={c} onGo={() => setOpen(null)} />
+                              ));
+                              return i.items.length <= 8 ? (
+                                <CenteredFlyout>{links}</CenteredFlyout>
+                              ) : (
+                                <div role="menu" className={cn(panel, "left-full top-0 mt-0 ml-1 max-h-[calc(100vh-110px)] w-max min-w-[240px] overflow-y-auto")}>
+                                  {links}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        ) : (
+                          <MenuLeaf key={i.label} item={i} onEnter={() => setSub(null)} onGo={() => setOpen(null)} />
+                        ),
+                      )}
                     </div>
                   )}
                 </div>
@@ -121,7 +212,7 @@ export function AppHeader({ variant }: Props) {
           <div className="relative">
             <button type="button" className={iconBtn} aria-label="Notificações" aria-expanded={open === "bell"} onClick={() => toggle("bell")}>
               <Bell className="size-5" />
-              <span className="absolute right-0.5 top-0.5 rounded-full bg-danger px-1.5 text-[10px] font-bold leading-[16px]">9+</span>
+              <span className="absolute right-0.5 top-0.5 rounded-full bg-danger-ink px-1.5 text-[12px] font-bold leading-[18px] text-white">9+</span>
             </button>
             {open === "bell" && (
               <div className={cn(panel, "right-0 w-[min(340px,90vw)]")}>
@@ -161,11 +252,43 @@ export function AppHeader({ variant }: Props) {
       </div>
 
       {app && (
-        <nav className="absolute inset-x-0 top-full flex gap-1 overflow-x-auto bg-navy px-4 py-2 lg:hidden" aria-label="Principal (mobile)">
-          {navMenus.flatMap((m) => (m.href ? [{ label: m.label, href: m.href }] : (m.items ?? []))).map((i) => (
-            <Link key={i.label} href={i.href} className="flex min-h-11 items-center whitespace-nowrap rounded-lg px-4 text-[14px] font-semibold text-white/85 hover:bg-white/10">
-              {i.label}
-            </Link>
+        <nav className="absolute inset-x-0 top-full max-h-[70vh] overflow-y-auto bg-navy px-4 py-2 lg:hidden" aria-label="Principal (mobile)">
+          <div className="flex gap-1 overflow-x-auto">
+            {navMenus.map((m) =>
+              m.href ? (
+                <Link key={m.label} href={m.href} className="flex min-h-11 items-center whitespace-nowrap rounded-lg px-4 text-[14px] font-semibold text-white/85 hover:bg-white/10">
+                  {m.label}
+                </Link>
+              ) : (
+                <button key={m.label} type="button" aria-expanded={mSub === m.label} onClick={() => setMSub(mSub === m.label ? null : m.label)} className={cn("flex min-h-11 items-center gap-1 whitespace-nowrap rounded-lg px-4 text-[14px] font-semibold text-white/85 hover:bg-white/10", mSub === m.label && "bg-white/10 text-white")}>
+                  {m.label} <ChevronDown className="size-3.5 opacity-70" />
+                </button>
+              ),
+            )}
+          </div>
+          {navMenus.filter((m) => m.items && m.label === mSub).map((m) => (
+            <ul key={m.label} className="mt-2 space-y-0.5 border-t border-white/15 pt-2">
+              {m.items?.map((i) => (
+                <li key={i.label}>
+                  {i.items ? (
+                    <details className="group">
+                      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-lg px-3 text-[14px] font-semibold text-white/90 hover:bg-white/10">
+                        {i.label} <ChevronDown className="size-4 transition-transform group-open:rotate-180" />
+                      </summary>
+                      <ul className="ml-3 border-l border-white/15 pl-2">
+                        {i.items.map((c) => (
+                          <li key={c.label}>
+                            <MenuLeaf item={c} mobile />
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  ) : (
+                    <MenuLeaf item={i} mobile />
+                  )}
+                </li>
+              ))}
+            </ul>
           ))}
         </nav>
       )}
