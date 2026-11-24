@@ -194,14 +194,16 @@ export const tickets: Ticket[] = Array.from({ length: 32 }, (_, i) => {
 
 export type HistoryEntry = {
   id: string;
-  kind: "message" | "note" | "system";
-  author: string;
-  role: "Solicitante" | "Suporte" | "Sistema";
-  when: string;
+  user: string;
+  date: string;
+  time: string;
   text: string;
+  status: string;
+  /** mensagem automática do sistema (ícone de engrenagem) */
+  auto?: boolean;
 };
 
-const initials = (name: string) =>
+export const initials = (name: string) =>
   name
     .split(" ")
     .filter((p) => p.length > 2)
@@ -209,22 +211,25 @@ const initials = (name: string) =>
     .map((p) => p[0])
     .join("")
     .toUpperCase();
-export { initials };
+
+/** Login no estilo do portal: primeiro nome + iniciais, em maiúsculas. */
+export const loginOf = (name: string) => {
+  const [first, ...rest] = name.split(" ");
+  return (first + rest.map((p) => p[0] ?? "").join("")).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+};
 
 export function historyFor(t: Ticket): HistoryEntry[] {
-  const day = t.opened.slice(0, 10);
-  const hour = (h: number, m: number) => `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  const date = t.opened.slice(0, 10);
   const h0 = Number(t.opened.slice(11, 13));
+  const at = (h: number, m: number, s: number) => [h, m, s].map((n) => String(n).padStart(2, "0")).join(":");
   const support = t.owner || "Atendente Exemplo";
-  const list: HistoryEntry[] = [
-    { id: "1", kind: "message", author: t.requester, role: "Solicitante", when: `${day} às ${hour(h0, 5)}`, text: t.firstMessage },
-    { id: "2", kind: "system", author: "Sistema", role: "Sistema", when: `${day} às ${hour(h0, 6)}`, text: `Chamado aberto por ${t.requester} via Portal, com prioridade ${t.priority}.` },
-    { id: "3", kind: "note", author: support, role: "Suporte", when: `${day} às ${hour(h0 + 1, 12)}`, text: "Acompanhamento interno: chamado visualizado e equipamento verificado remotamente. Aguardando janela de atendimento." },
-    { id: "4", kind: "message", author: support, role: "Suporte", when: `${day} às ${hour(h0 + 2, 30)}`, text: "Olá! Analisamos o caso e vamos dar sequência ao atendimento. Retornamos em breve com novidades." },
-    { id: "5", kind: "message", author: support, role: "Suporte", when: t.updated.replace(" ", " às "), text: t.lastMessage },
+  const status = t.status.toUpperCase();
+  const e = (id: number, user: string, h: number, m: number, text: string, st: string, auto = false): HistoryEntry => ({ id: String(id), user, date, time: at(h, m, 7 + id), text, status: st, auto });
+  return [
+    e(1, loginOf(t.requester), h0, 5, t.firstMessage, "PENDENTE"),
+    e(2, loginOf(support), h0 + 1, 12, "Encaminhando chamado ao atendimento.\n\nAnalisando o equipamento para dar sequência.", status),
+    e(3, loginOf(t.requester), h0 + 2, 30, "Prezados, algum retorno? Preciso usar essa máquina com urgência.", status),
+    e(4, loginOf(support), h0 + 3, 26, `ACOMPANHAMENTO INTERNO\nChamado visualizado por ${support.toUpperCase()} e não efetuado nenhum registro.`, status, true),
+    { id: "5", user: loginOf(support), date: t.updated.slice(0, 10), time: `${t.updated.slice(11)}:00`, text: t.lastMessage, status },
   ];
-  if (t.status === "Pendente validação") {
-    list.push({ id: "6", kind: "system", author: "Sistema", role: "Sistema", when: t.updated.replace(" ", " às "), text: "Status do chamado alterado para: Pendente validação." });
-  }
-  return list;
 }

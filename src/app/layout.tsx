@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${jakarta.variable} h-full antialiased`}>
-      <body className="min-h-full bg-surface text-[15px] text-ink">{children}</body>
+      <body className="min-h-full bg-surface text-[16px] text-ink">{children}</body>
     </html>
   );
 }

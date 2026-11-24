@@ -38,7 +38,7 @@ export function AppHeader({ variant }: Props) {
   }, []);
 
   const toggle = (key: string) => setOpen((o) => (o === key ? null : key));
-  const iconBtn = "relative flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition hover:bg-white/10";
+  const iconBtn = "relative flex h-10 w-10 coarse:h-11 coarse:w-11 items-center justify-center rounded-full text-white/90 transition hover:bg-white/10";
 
   return (
     <header
@@ -48,7 +48,7 @@ export function AppHeader({ variant }: Props) {
         app ? "h-[68px]" : "h-[76px]",
       )}
     >
-      <div className={cn("mx-auto flex h-full max-w-[1600px] items-center gap-4 px-4 md:px-8")}>
+      <div className={cn("mx-auto flex h-full max-w-[1720px] items-center gap-4 px-4 md:px-8")}>
         <Link href="/" aria-label="Facta — início" className={cn("shrink-0", app ? "text-[30px]" : "text-[34px]")}>
           <Brand />
         </Link>
@@ -58,7 +58,7 @@ export function AppHeader({ variant }: Props) {
             {navMenus.map((m) => {
               const active = m.href === pathname || m.items?.some((i) => i.href === pathname);
               const cls = cn(
-                "flex h-10 items-center gap-1 whitespace-nowrap rounded-xl px-3.5 text-[14px] font-semibold text-white/80 transition hover:bg-white/10 hover:text-white",
+                "flex h-10 coarse:h-11 items-center gap-1 whitespace-nowrap rounded-xl px-3.5 text-[14px] font-semibold text-white/80 transition hover:bg-white/10 hover:text-white",
                 active && "bg-brand text-white shadow-sm hover:bg-brand",
               );
               return (
@@ -80,7 +80,7 @@ export function AppHeader({ variant }: Props) {
                           key={i.label}
                           href={i.href}
                           onClick={() => setOpen(null)}
-                          className="block rounded-xl px-3 py-2 text-[13px] font-medium hover:bg-brand-soft"
+                          className="block rounded-xl px-3 py-2 text-[14px] font-medium hover:bg-brand-soft"
                         >
                           {i.label}
                         </Link>
@@ -111,8 +111,8 @@ export function AppHeader({ variant }: Props) {
                   autoFocus
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Buscar chamado, título ou solicitante"
-                  className="h-10 w-full rounded-xl border border-line bg-surface px-3 text-[13px] outline-none focus:border-brand"
+                  placeholder="Buscar chamado, título, solicitante ou responsável"
+                  className="h-10 w-full rounded-xl border border-line bg-surface px-3 text-[14px] outline-none focus:border-brand"
                 />
               </form>
             )}
@@ -128,7 +128,7 @@ export function AppHeader({ variant }: Props) {
                 <p className="px-3 pb-1 pt-2 text-[12px] font-bold uppercase tracking-wider text-ink-soft">Atualizações</p>
                 {notifications.map((n) => (
                   <div key={n.id} className="rounded-xl px-3 py-2 hover:bg-brand-soft">
-                    <p className="text-[13px] font-semibold">{n.title}</p>
+                    <p className="text-[14px] font-semibold">{n.title}</p>
                     <p className="text-[12px] text-ink-soft">{n.when}</p>
                   </div>
                 ))}
@@ -141,17 +141,17 @@ export function AppHeader({ variant }: Props) {
               type="button"
               aria-expanded={open === "user"}
               onClick={() => toggle("user")}
-              className="flex h-10 items-center gap-2 rounded-full pl-1 pr-3 transition hover:bg-white/10"
+              className="flex h-10 coarse:h-11 items-center gap-2 rounded-full pl-1 pr-3 transition hover:bg-white/10"
             >
-              <span className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-[#5aa2ff] to-brand text-[12px] font-bold ring-2 ring-white/60">
+              <span className="flex size-8 items-center justify-center rounded-full bg-brand text-[12px] font-bold ring-2 ring-white/60">
                 {currentUser.initials}
               </span>
-              <span className="hidden text-[12px] font-bold uppercase tracking-wide md:block">{currentUser.name}</span>
+              <span className="hidden whitespace-nowrap text-[12px] font-bold uppercase tracking-wide 2xl:block">{currentUser.name}</span>
               <ChevronDown className="size-4 opacity-80" />
             </button>
             {open === "user" && (
               <div className={cn(panel, "right-0 w-[200px]")}>
-                <Link href="/login" className="flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-semibold text-danger hover:bg-danger-soft">
+                <Link href="/login" className="flex items-center gap-2 rounded-xl px-3 py-2 text-[14px] font-semibold text-danger-ink hover:bg-danger-soft">
                   <LogOut className="size-4" /> Sair
                 </Link>
               </div>
@@ -163,7 +163,7 @@ export function AppHeader({ variant }: Props) {
       {app && (
         <nav className="absolute inset-x-0 top-full flex gap-1 overflow-x-auto bg-navy px-4 py-2 lg:hidden" aria-label="Principal (mobile)">
           {navMenus.flatMap((m) => (m.href ? [{ label: m.label, href: m.href }] : (m.items ?? []))).map((i) => (
-            <Link key={i.label} href={i.href} className="whitespace-nowrap rounded-lg px-3 py-1.5 text-[12px] font-semibold text-white/85 hover:bg-white/10">
+            <Link key={i.label} href={i.href} className="flex min-h-11 items-center whitespace-nowrap rounded-lg px-4 text-[14px] font-semibold text-white/85 hover:bg-white/10">
               {i.label}
             </Link>
           ))}

@@ -112,7 +112,7 @@ function AppCard({ app }: { app: PortalApp }) {
   return (
     <Link
       href={app.href}
-      className="group relative flex min-h-[132px] items-center gap-4 overflow-hidden rounded-3xl border border-white bg-white/85 p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-14px_rgba(11,95,224,0.35)] focus-visible:outline-2 focus-visible:outline-brand"
+      className="group relative flex min-h-[132px] items-center gap-4 overflow-hidden rounded-3xl border border-white bg-white/85 p-5 shadow-card transition-shadow hover:shadow-[0_18px_40px_-14px_rgba(11,95,224,0.35)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-brand"
     >
       <span aria-hidden className={cn("absolute inset-y-0 right-0 w-1/2 bg-gradient-to-r opacity-90 [clip-path:ellipse(80%_130%_at_100%_50%)]", t.glow)} />
       <span className={cn("relative flex size-[76px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-lg", t.tile)}>
@@ -143,7 +143,7 @@ function InlineNotice({ a }: { a: Announcement }) {
         <Megaphone className="size-12" strokeWidth={1.6} />
       </span>
       <div className="flex-1 px-5 py-4 md:px-4">
-        <span className={cn("rounded-full px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-wide", urgent ? "bg-danger-soft text-danger" : "bg-brand-soft text-brand")}>{a.tag}</span>
+        <span className={cn("rounded-full px-3 py-0.5 text-[12px] font-extrabold uppercase tracking-wide", urgent ? "bg-danger-soft text-danger-ink" : "bg-brand-soft text-brand")}>{a.tag}</span>
         <h2 className="mt-1.5 flex items-center gap-2 text-[24px] font-extrabold tracking-tight">
           {a.title}
           {urgent && <Droplet className="size-5 fill-danger text-danger" />}
@@ -162,21 +162,44 @@ function InlineNotice({ a }: { a: Announcement }) {
 
 function UrgentDialog({ a, onClose }: { a: Announcement; onClose: () => void }) {
   const btn = useRef<HTMLButtonElement>(null);
+  const box = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
     btn.current?.focus();
-    const esc = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", esc);
-    return () => document.removeEventListener("keydown", esc);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab" || !box.current) return;
+      // mantém o Tab dentro do popup: do último volta ao primeiro e vice-versa
+      const items = box.current.querySelectorAll<HTMLElement>("button, a[href], [tabindex]:not([tabindex='-1'])");
+      const first = items[0];
+      const last = items[items.length - 1];
+      const outside = !box.current.contains(document.activeElement);
+      if (e.shiftKey && (document.activeElement === first || outside)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || outside)) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      opener?.focus();
+    };
   }, [onClose]);
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#041b45]/55 p-4 backdrop-blur-[3px]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div role="dialog" aria-modal="true" aria-labelledby="aviso-titulo" className="relative max-h-[94vh] w-full max-w-[680px] overflow-y-auto rounded-[28px] bg-white p-6 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] [animation:facta-pop_.25s_ease-out] md:p-8">
+      <div ref={box} role="dialog" aria-modal="true" aria-labelledby="aviso-titulo" className="relative max-h-[94vh] w-full max-w-[680px] overflow-y-auto rounded-[28px] bg-white p-6 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] [animation:facta-pop_.25s_ease-out] motion-reduce:[animation:none] md:p-8">
         <div className="flex items-center gap-3">
           <Brand tone="color" className="text-[26px]" />
           <span className="h-7 w-px bg-line" />
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-danger px-3 py-1.5 text-[13px] font-extrabold uppercase text-white">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-danger px-3 py-1.5 text-[14px] font-extrabold uppercase text-white">
             <AlertTriangle className="size-4" /> {a.tag}
           </span>
           <button type="button" onClick={onClose} aria-label="Fechar comunicado" className="ml-auto flex size-10 items-center justify-center rounded-full bg-surface hover:bg-brand-soft">

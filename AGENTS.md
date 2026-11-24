@@ -39,6 +39,7 @@ A reusable template for reverse-engineering any website into a clean, modern Nex
 - **No personal aesthetic changes during emulation phase** — match 1:1 first, customize later
 - **Real content** — use actual text and assets from the target site, not placeholders
 - **Beauty-first** — every pixel matters
+- **Portal Facta (redesenho):** para qualquer tela do portal, siga `docs/design/DIRETRIZES-DE-DESIGN.md` (tokens, tipografia, componentes, padrões de tela). Ele prevalece sobre a emulação 1:1 acima.
 
 ## Project Structure
 ```

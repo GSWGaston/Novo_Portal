@@ -18,21 +18,19 @@ import {
   Tag,
   User,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Breadcrumb } from "./dashboard-view";
-import { currentUser, historyFor, initials, type HistoryEntry, type Priority, type Status, type Ticket } from "./data";
+import { currentUser, historyFor, initials, loginOf, type HistoryEntry, type Priority, type Status, type Ticket } from "./data";
 import { PriorityPill, StatusPill } from "./tickets-view";
 
 const card = "rounded-3xl border border-white bg-white/90 shadow-card";
 const field = "h-11 w-full rounded-xl border border-line bg-white px-3 text-[14px] font-semibold outline-none focus:border-brand";
 
-type Filter = "all" | "message" | "note" | "system";
-
 function Side({ icon: Icon, title, children }: { icon: typeof User; title: string; children: React.ReactNode }) {
   return (
     <section className={cn(card, "overflow-hidden")}>
-      <h2 className="flex items-center gap-2.5 bg-navy px-5 py-3.5 text-[16px] font-extrabold text-white">
+      <h2 className="flex items-center gap-2.5 bg-navy px-5 py-3.5 text-[16px] font-bold text-white">
         <Icon className="size-5" /> {title}
       </h2>
       <div className="p-5">{children}</div>
@@ -49,51 +47,9 @@ function Row({ k, v }: { k: string; v: string }) {
   );
 }
 
-function Entry({ e }: { e: HistoryEntry }) {
-  if (e.kind === "system") {
-    return (
-      <li className="flex gap-4">
-        <span className="mt-1 flex size-10 shrink-0 items-center justify-center rounded-full bg-surface text-ink-soft ring-1 ring-line">
-          <Cog className="size-5" />
-        </span>
-        <div className="flex-1 rounded-2xl border border-line bg-surface/70 px-5 py-4">
-          <p className="flex flex-wrap items-center justify-between gap-2 text-[14px]">
-            <span className="font-extrabold">Atividade do sistema</span>
-            <span className="text-[13px] text-ink-soft">{e.when}</span>
-          </p>
-          <p className="mt-1 text-[14px] text-ink-soft">{e.text}</p>
-        </div>
-      </li>
-    );
-  }
-  const note = e.kind === "note";
-  const mine = e.role === "Suporte";
-  return (
-    <li className="flex gap-4">
-      <span className={cn("mt-1 flex size-10 shrink-0 items-center justify-center rounded-full text-[13px] font-extrabold", note ? "bg-warn-soft text-warn" : mine ? "bg-navy text-white" : "bg-brand-soft text-brand")}>
-        {initials(e.author)}
-      </span>
-      <div className={cn("flex-1 rounded-2xl border px-5 py-4", note ? "border-warn/30 bg-warn-soft/60" : "border-line bg-white")}>
-        <p className="flex flex-wrap items-center justify-between gap-2 text-[14px]">
-          <span className="flex items-center gap-2">
-            <span className="font-extrabold">{e.author}</span>
-            <span className={cn("rounded-full px-2.5 py-0.5 text-[12px] font-bold", note ? "bg-warn text-white" : mine ? "bg-brand-soft text-brand" : "bg-ok-soft text-ok")}>
-              {note ? "Nota interna" : e.role}
-            </span>
-          </span>
-          <span className="flex items-center gap-1.5 text-[13px] text-ink-soft">
-            <Calendar className="size-3.5" /> {e.when}
-          </span>
-        </p>
-        <p className="mt-2 text-[15px] leading-relaxed">{e.text}</p>
-      </div>
-    </li>
-  );
-}
-
 export function TicketDetail({ ticket }: { ticket: Ticket }) {
   const [entries, setEntries] = useState<HistoryEntry[]>(() => historyFor(ticket));
-  const [filter, setFilter] = useState<Filter>("all");
+  const [fresh, setFresh] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<Status>(ticket.status);
   const [priority, setPriority] = useState<Priority>(ticket.priority);
@@ -103,41 +59,34 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
   const [replyAs, setReplyAs] = useState<"message" | "note">("message");
   const [toast, setToast] = useState("");
 
-  const now = () => {
-    const d = new Date();
-    const p = (n: number) => String(n).padStart(2, "0");
-    return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} às ${p(d.getHours())}:${p(d.getMinutes())}`;
-  };
   const notify = (m: string) => {
     setToast(m);
     setTimeout(() => setToast(""), 3000);
   };
-  const add = (e: Omit<HistoryEntry, "id" | "when">) => setEntries((l) => [...l, { ...e, id: String(l.length + 1), when: now() }]);
+  const add = (e: Omit<HistoryEntry, "id" | "date" | "time" | "status">) => {
+    const d = new Date();
+    const p = (n: number) => String(n).padStart(2, "0");
+    setFresh(String(entries.length + 1));
+    setEntries((l) => [...l, { ...e, id: String(l.length + 1), date: `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()}`, time: `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`, status: status.toUpperCase() }]);
+  };
 
-  const counts = useMemo(() => ({ all: entries.length, message: entries.filter((e) => e.kind === "message").length, note: entries.filter((e) => e.kind === "note").length, system: entries.filter((e) => e.kind === "system").length }), [entries]);
-  const shown = entries.filter((e) => (filter === "all" || e.kind === filter) && `${e.author} ${e.text}`.toLowerCase().includes(search.trim().toLowerCase()));
+  const shown = entries.filter((e) => `${e.user} ${e.text}`.toLowerCase().includes(search.trim().toLowerCase()));
 
   const send = () => {
     if (!reply.trim()) return;
-    add({ kind: replyAs, author: currentUser.name, role: "Suporte", text: reply.trim() });
+    add({ user: loginOf(currentUser.name), text: (replyAs === "note" ? "ACOMPANHAMENTO INTERNO\n" : "") + reply.trim() });
     setReply("");
-    notify(replyAs === "note" ? "Nota interna registrada." : "Resposta enviada ao solicitante.");
+    notify(replyAs === "note" ? "Acompanhamento interno registrado." : "Resposta enviada ao solicitante.");
   };
 
   const save = () => {
-    if (draft.status !== status) add({ kind: "system", author: "Sistema", role: "Sistema", text: `Status do chamado alterado para: ${draft.status}.` });
+    if (draft.status !== status) add({ user: loginOf(currentUser.name), text: `ALTERAÇÃO DE STATUS\nStatus do chamado alterado para: ${draft.status}.`, auto: true });
     setStatus(draft.status);
     setPriority(draft.priority);
     setOwner(draft.owner);
     notify("Alterações salvas.");
   };
 
-  const filters: { id: Filter; label: string }[] = [
-    { id: "all", label: "Todos" },
-    { id: "message", label: "Mensagens" },
-    { id: "note", label: "Notas internas" },
-    { id: "system", label: "Atividades do sistema" },
-  ];
 
   return (
     <div className="space-y-6">
@@ -150,8 +99,8 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
               <Headset className="size-7" strokeWidth={1.8} />
             </span>
             <div className="min-w-0">
-              <h1 className="text-[30px] font-extrabold leading-none tracking-tight">Chamado #{ticket.code}</h1>
-              <p className="mt-2 text-[15px] text-ink-soft">
+              <h1 className="text-[32px] font-extrabold leading-none tracking-tight">Chamado #{ticket.code}</h1>
+              <p className="mt-2 text-[16px] text-ink-soft">
                 {ticket.title} — {ticket.subtitle}
               </p>
             </div>
@@ -183,83 +132,90 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
         <div className="space-y-6">
           <section className={cn(card, "p-6")}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="flex items-center gap-2.5 text-[22px] font-extrabold">
+              <h2 className="flex items-center gap-2.5 text-[20px] font-bold">
                 <MessageSquare className="size-6 text-brand" /> Histórico do chamado
               </h2>
-              <span className="rounded-full bg-surface px-3 py-1 text-[13px] font-bold text-ink-soft">{entries.length} registros</span>
+              <span className="rounded-full bg-surface px-3 py-1 text-[14px] font-bold text-ink-soft">{entries.length} registros</span>
             </div>
 
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              {filters.map((f) => (
-                <button key={f.id} type="button" aria-pressed={filter === f.id} onClick={() => setFilter(f.id)} className={cn("rounded-full border px-4 py-2 text-[13px] font-bold transition", filter === f.id ? "border-navy bg-navy text-white" : "border-line bg-white text-ink hover:bg-brand-soft")}>
-                  {f.label} ({counts[f.id]})
-                </button>
-              ))}
-              <label className="relative ml-auto block w-full sm:w-[260px]">
+            <div className="mt-5 flex">
+              <label className="relative block w-full sm:w-[320px]">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-soft" />
                 <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar no histórico..." className="h-10 w-full rounded-xl border border-line bg-white pl-9 pr-3 text-[14px] outline-none focus:border-brand" />
               </label>
             </div>
 
-            <ol className="relative mt-6 space-y-5">
-              {shown.map((e) => (
-                <Entry key={e.id} e={e} />
-              ))}
-              {shown.length === 0 && <li className="rounded-2xl border border-dashed border-line py-10 text-center text-[14px] text-ink-soft">Nenhum registro encontrado.</li>}
-            </ol>
+
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-line">
+              <table className="w-full min-w-[720px] border-collapse text-[14px]">
+                <thead className="bg-surface text-[12px] font-bold uppercase tracking-wider text-ink-soft">
+                  <tr>
+                    <th className="px-5 py-4 text-left">Usuário</th>
+                    <th className="px-4 py-4 text-left">Data</th>
+                    <th className="px-4 py-4 text-left">Hora</th>
+                    <th className="px-4 py-4 text-left">Descrição</th>
+                    <th className="px-5 py-4 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {shown.map((e) => (
+                    <tr key={e.id} className={cn("border-t border-line even:bg-surface/60", e.id === fresh && "[animation:facta-flash_1.6s_ease-out]")}>
+                      <td className="whitespace-nowrap px-5 py-4 align-middle">
+                        <span className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-bold", e.auto ? "bg-navy text-white" : "bg-user text-white")}>
+                          {e.auto ? <Cog className="size-3.5" /> : <User className="size-3.5" />}
+                          {e.auto ? "SISTEMA" : e.user}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-4 align-middle">{e.date}</td>
+                      <td className="whitespace-nowrap px-4 py-4 align-middle">{e.time}</td>
+                      <td className="px-4 py-4 align-middle">
+                        {e.text.split("\n").map((line, i) => (
+                          <p key={i} className={cn("min-h-[1.4em] leading-relaxed", i === 0 && e.text.includes("\n") && /^[A-ZÀ-Ú ]+$/.test(line) && "font-bold")}>
+                            {line}
+                          </p>
+                        ))}
+                      </td>
+                      <td className="px-5 py-4 text-center align-middle text-[12px] font-bold uppercase text-ink-soft">{e.status}</td>
+                    </tr>
+                  ))}
+                  {shown.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-10 text-center text-ink-soft">{search.trim() ? `Nenhum registro encontrado para “${search.trim()}”.` : "Este chamado ainda não tem registros."}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </section>
 
           <section className={cn(card, "p-6")}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="flex items-center gap-2.5 text-[20px] font-extrabold">
+              <h2 className="flex items-center gap-2.5 text-[20px] font-bold">
                 <Reply className="size-6 text-brand" /> Responder chamado
               </h2>
               <label className="relative block">
                 <select value={replyAs} onChange={(e) => setReplyAs(e.target.value as "message" | "note")} className={cn(field, "appearance-none pr-9")}>
                   <option value="message">Resposta ao solicitante</option>
-                  <option value="note">Nota interna</option>
+                  <option value="note">Acompanhamento interno</option>
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2" />
               </label>
             </div>
-            <textarea value={reply} onChange={(e) => setReply(e.target.value)} rows={5} placeholder="Digite sua resposta aqui..." className="mt-4 w-full resize-y rounded-2xl border border-line bg-white p-4 text-[15px] outline-none focus:border-brand" />
+            <textarea value={reply} onChange={(e) => setReply(e.target.value)} rows={5} placeholder="Digite sua resposta aqui..." className="mt-4 w-full resize-y rounded-2xl border border-line bg-white p-4 text-[16px] outline-none focus:border-brand" />
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-              <button type="button" className="flex h-11 items-center gap-2 rounded-xl border border-dashed border-line px-4 text-[14px] font-bold text-ink-soft hover:bg-brand-soft">
-                <Paperclip className="size-4" /> Anexar arquivos
+              <button type="button" disabled title="Anexos estarão disponíveis em breve" className="flex h-11 items-center gap-2 rounded-xl border border-dashed border-line px-4 text-[14px] font-bold text-ink-soft disabled:cursor-not-allowed disabled:opacity-60">
+                <Paperclip className="size-4" /> Anexar arquivos (em breve)
               </button>
-              <button type="button" onClick={send} disabled={!reply.trim()} className="flex h-11 items-center gap-2 rounded-xl bg-brand px-6 text-[15px] font-bold text-white transition hover:bg-brand-dark disabled:opacity-50">
-                <Send className="size-4" /> {replyAs === "note" ? "Salvar nota" : "Enviar resposta"}
+              <button type="button" onClick={send} disabled={!reply.trim()} className="flex h-11 items-center gap-2 rounded-xl bg-brand px-6 text-[16px] font-bold text-white transition hover:bg-brand-dark disabled:opacity-50">
+                <Send className="size-4" /> {replyAs === "note" ? "Salvar acompanhamento" : "Enviar resposta"}
               </button>
             </div>
           </section>
         </div>
 
         <aside className="space-y-6">
-          <Side icon={User} title="Solicitante">
-            <div className="flex items-center gap-4">
-              <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[17px] font-extrabold text-brand">{initials(ticket.requester)}</span>
-              <div>
-                <p className="text-[16px] font-extrabold">{ticket.requester}</p>
-                <p className="text-[13px] text-ink-soft">{ticket.origin}</p>
-                <p className="text-[13px] text-ink-soft">{ticket.uf}</p>
-              </div>
-            </div>
-            <div className="mt-4 space-y-2 text-[14px]">
-              <p className="flex items-center gap-3"><Mail className="size-4 text-ink-soft" /> solicitante@exemplo.com.br</p>
-              <p className="flex items-center gap-3"><Phone className="size-4 text-ink-soft" /> (00) 0000-0000</p>
-            </div>
-          </Side>
-
-          <Side icon={Monitor} title="Informações técnicas">
-            <Row k="Código" v={String(ticket.code)} />
-            <Row k="Ramal" v="0000" />
-            <Row k="IP" v="10.0.0.00" />
-            <Row k="Computador" v={`PFC-${String(ticket.code).slice(-4)}`} />
-            <Row k="Sistema operacional" v="Windows 10 Pro" />
-          </Side>
-
           <Side icon={Cog} title="Gerenciar chamado">
-            <div className="space-y-4 text-[13px] font-bold">
+            <div className="space-y-4 text-[14px] font-bold">
               <label className="block">
                 Status
                 <select value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as Status })} className={cn(field, "mt-1")}>
@@ -282,15 +238,38 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
                   <option>Alta</option>
                 </select>
               </label>
-              <button type="button" onClick={save} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[15px] font-bold text-white transition hover:bg-brand-dark">
+              <button type="button" onClick={save} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-[16px] font-bold text-white transition hover:bg-brand-dark">
                 <Save className="size-4" /> Salvar alterações
               </button>
             </div>
           </Side>
+
+          <Side icon={User} title="Solicitante">
+            <div className="flex items-center gap-4">
+              <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[18px] font-bold text-brand">{initials(ticket.requester)}</span>
+              <div>
+                <p className="text-[16px] font-bold">{ticket.requester}</p>
+                <p className="text-[14px] text-ink-soft">{ticket.origin}</p>
+                <p className="text-[14px] text-ink-soft">{ticket.uf}</p>
+              </div>
+            </div>
+            <div className="mt-4 space-y-2 text-[14px]">
+              <p className="flex items-center gap-3"><Mail className="size-4 text-ink-soft" /> solicitante@exemplo.com.br</p>
+              <p className="flex items-center gap-3"><Phone className="size-4 text-ink-soft" /> (00) 0000-0000</p>
+            </div>
+          </Side>
+
+          <Side icon={Monitor} title="Informações técnicas">
+            <Row k="Código" v={String(ticket.code)} />
+            <Row k="Ramal" v="0000" />
+            <Row k="IP" v="10.0.0.00" />
+            <Row k="Computador" v={`PFC-${String(ticket.code).slice(-4)}`} />
+            <Row k="Sistema operacional" v="Windows 10 Pro" />
+          </Side>
         </aside>
       </div>
 
-      <div role="status" aria-live="polite" className={cn("fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl bg-navy px-5 py-3 text-[14px] font-bold text-white shadow-card transition", toast ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0")}>
+      <div role="status" aria-live="polite" className={cn("fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl bg-navy px-5 py-3 text-[14px] font-bold text-white shadow-card transition motion-reduce:transition-none", toast ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0")}>
         <Check className="size-4" /> {toast}
       </div>
     </div>

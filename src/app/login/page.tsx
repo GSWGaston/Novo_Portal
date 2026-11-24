@@ -32,7 +32,7 @@ export default function LoginPage() {
         <aside className="relative hidden flex-1 items-center justify-center lg:flex">
           <div className="absolute left-0 top-1/2 max-w-[260px] -translate-y-[65%] border-l-4 border-brand pl-4">
             <p className="text-[26px] font-extrabold leading-tight">Pessoas, sistemas e resultados.</p>
-            <p className="mt-3 text-[17px] text-ink-soft">Tudo em um só lugar.</p>
+            <p className="mt-3 text-[18px] text-ink-soft">Tudo em um só lugar.</p>
           </div>
           {hasCharacter && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -41,7 +41,7 @@ export default function LoginPage() {
         </aside>
       </div>
 
-      <footer className="relative mx-auto flex w-full max-w-[1400px] flex-wrap items-center justify-between gap-2 border-t border-brand/15 px-4 py-4 text-[13px] text-ink-soft md:px-10">
+      <footer className="relative mx-auto flex w-full max-w-[1400px] flex-wrap items-center justify-between gap-2 border-t border-brand/15 px-4 py-4 text-[14px] text-ink-soft md:px-10">
         <span className="flex items-center gap-3">
           <Brand tone="color" className="text-[20px] opacity-80" />
           <span className="h-5 w-px bg-ink-soft/40" /> Portal Interno da Facta

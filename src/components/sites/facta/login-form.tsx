@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight, Eye, EyeOff, Lock, User } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -14,6 +13,7 @@ export function LoginForm() {
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
   const [error, setError] = useState("");
+  const [hint, setHint] = useState("");
 
   return (
     <form
@@ -22,14 +22,14 @@ export function LoginForm() {
       onSubmit={(e) => {
         e.preventDefault();
         if (!user.trim() || !pass) {
-          setError("Informe usuário e senha para continuar.");
+          setError(!user.trim() && !pass ? "Informe seu usuário e sua senha." : !user.trim() ? "Informe seu usuário." : "Informe sua senha.");
           return;
         }
         // Sem backend: qualquer credencial preenchida entra (protótipo de design).
         router.push("/");
       }}
     >
-      <label htmlFor="user" className="mb-2 block text-[15px] font-bold">
+      <label htmlFor="user" className="mb-2 block text-[16px] font-bold">
         Usuário
       </label>
       <div className={field}>
@@ -44,7 +44,7 @@ export function LoginForm() {
         />
       </div>
 
-      <label htmlFor="pass" className="mb-2 mt-5 block text-[15px] font-bold">
+      <label htmlFor="pass" className="mb-2 mt-5 block text-[16px] font-bold">
         Senha
       </label>
       <div className={field}>
@@ -64,12 +64,12 @@ export function LoginForm() {
       </div>
 
       <div className="mt-3 flex items-start justify-between gap-3">
-        <p role="alert" className="text-[13px] font-medium text-danger">
-          {error}
+        <p role={error ? "alert" : "status"} className={error ? "text-[14px] font-medium text-danger-ink" : "text-[14px] text-ink-soft"}>
+          {error || hint}
         </p>
-        <Link href="#" className="shrink-0 text-[14px] font-medium text-brand underline underline-offset-2">
+        <button type="button" onClick={() => { setError(""); setHint("A recuperação de senha ainda não está disponível nesta versão."); }} className="shrink-0 text-[14px] font-medium text-brand underline underline-offset-2">
           Esqueci minha senha
-        </Link>
+        </button>
       </div>
 
       <button

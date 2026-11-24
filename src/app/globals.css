@@ -3,6 +3,7 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant coarse (@media (pointer: coarse));
 
 @theme inline {
   --color-background: var(--background);
@@ -22,6 +23,11 @@
   --color-warn: #f08a00;
   --color-warn-soft: #fff3df;
   --color-ok: #17a05d;
+  --color-danger-ink: #b3200f;
+  --color-warn-ink: #8f5200;
+  --color-ok-ink: #0c6e3d;
+  --color-user: #6a3fc9;
+  --color-ink-mute: #66738f;
   --color-ok-soft: #e4f7ec;
   --shadow-card: 0 1px 2px rgba(11, 31, 77, 0.04), 0 8px 24px -8px rgba(11, 60, 150, 0.14);
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
@@ -133,6 +139,10 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@keyframes facta-flash {
+  from { background-color: var(--color-brand-soft); }
+}
+
 @keyframes facta-pop {
   from { opacity: 0; transform: translateY(12px) scale(0.97); }
   to { opacity: 1; transform: none; }
@@ -147,5 +157,17 @@
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  table,
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 }
