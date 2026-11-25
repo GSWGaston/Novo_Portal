@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  AlertTriangle,
   ArrowUpDown,
   Check,
   Clock,
@@ -21,12 +22,13 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "./date-picker";
 import { Select } from "./select";
 import { Breadcrumb } from "./dashboard-view";
+import { rowClick } from "./data-list";
 import { tickets, type Ticket } from "./data";
 
 type Filters = { code: string; title: string; origin: string; requester: string; owner: string; status: string; priority: string; uf: string; from: string; to: string };
@@ -38,7 +40,7 @@ const labels: Record<keyof Filters, string> = {
 };
 
 type SortKey = "code" | "title" | "priority" | "status" | "requester" | "owner" | "updated";
-const rank = { Baixa: 0, Média: 1, Alta: 2 } as const;
+const rank = { Baixa: 0, Média: 1, Alta: 2, Urgente: 3 } as const;
 const toTime = (s: string) => {
   const [d, m, rest] = s.split("/");
   const [y, hm = "00:00"] = rest.split(" ");
@@ -80,6 +82,13 @@ export function StatusPill({ s }: { s: string }) {
 }
 
 export function PriorityPill({ p }: { p: Ticket["priority"] }) {
+  if (p === "Urgente") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-danger-ink px-3 py-1 text-[14px] font-bold text-white">
+        <AlertTriangle className="size-4" /> Urgente
+      </span>
+    );
+  }
   const c = p === "Alta" ? "bg-danger-soft text-danger-ink" : p === "Média" ? "bg-warn-soft text-warn-ink" : "bg-ok-soft text-ok-ink";
   const dot = p === "Alta" ? "bg-danger" : p === "Média" ? "bg-warn" : "bg-ok";
   return (
@@ -90,6 +99,7 @@ export function PriorityPill({ p }: { p: Ticket["priority"] }) {
 }
 
 export function TicketsView() {
+  const router = useRouter();
   const [q, setQ] = useState(useSearchParams().get("q") ?? "");
   const [exact, setExact] = useState(false);
   const [open, setOpen] = useState(false);
@@ -246,7 +256,7 @@ export function TicketsView() {
           <div className="border-b border-line bg-brand-soft/50 p-6">
             <div className="grid gap-x-5 gap-y-5 sm:grid-cols-2 lg:grid-cols-5">
               <Field label="Status"><Pick value={draft.status} onChange={(v) => setDraft({ ...draft, status: v })} options={uniq("status")} /></Field>
-              <Field label="Prioridade"><Pick value={draft.priority} onChange={(v) => setDraft({ ...draft, priority: v })} options={["Baixa", "Média", "Alta"]} /></Field>
+              <Field label="Prioridade"><Pick value={draft.priority} onChange={(v) => setDraft({ ...draft, priority: v })} options={["Baixa", "Média", "Alta", "Urgente"]} /></Field>
               <Field label="Responsável"><Pick value={draft.owner} onChange={(v) => setDraft({ ...draft, owner: v })} options={uniq("owner")} /></Field>
               <Field label="Alterado de"><DatePicker value={draft.from} onChange={(v) => setDraft({ ...draft, from: v })} aria-label="Alterado de" /></Field>
               <Field label="Alterado até"><DatePicker value={draft.to} onChange={(v) => setDraft({ ...draft, to: v })} aria-label="Alterado até" /></Field>
@@ -316,6 +326,7 @@ export function TicketsView() {
                   <Fragment key={t.code}>
                     <tr
                       data-row={t.code}
+                      onClick={rowClick(() => router.push(`/solicitacoes/${t.code}`))}
                       data-pin={pinned ? t.code : undefined}
                       onDragOver={(e) => {
                         if (!pinned || dragging === null) return;
@@ -323,7 +334,7 @@ export function TicketsView() {
                         setOver(t.code);
                       }}
                       onDrop={() => pinned && dragging !== null && reorder(dragging, t.code)}
-                      className={cn("border-b border-line hover:bg-brand-soft/40", pinned && "group/row bg-warn-soft/50 shadow-[inset_3px_0_0_var(--color-warn)]", dragging === t.code && "bg-brand-soft opacity-45 outline-2 -outline-offset-2 outline-dashed outline-brand/50", dragging !== null && dragging !== t.code && over === t.code && pinned && (pinnedCodes.indexOf(dragging) < pinnedCodes.indexOf(t.code) ? "shadow-[inset_0_-3px_0_var(--color-brand)]" : "shadow-[inset_0_3px_0_var(--color-brand)]"), isOpen && "bg-brand-soft/40")}
+                      className={cn("cursor-pointer border-b border-line hover:bg-brand-soft/40", pinned && "group/row bg-warn-soft/50 shadow-[inset_3px_0_0_var(--color-warn)]", t.priority === "Urgente" && "bg-danger-soft hover:bg-danger-soft", dragging === t.code && "bg-brand-soft opacity-45 outline-2 -outline-offset-2 outline-dashed outline-brand/50", dragging !== null && dragging !== t.code && over === t.code && pinned && (pinnedCodes.indexOf(dragging) < pinnedCodes.indexOf(t.code) ? "shadow-[inset_0_-3px_0_var(--color-brand)]" : "shadow-[inset_0_3px_0_var(--color-brand)]"), isOpen && "bg-brand-soft/40")}
                     >
                       <td className="relative !pl-8 !pr-1 coarse:!pl-12">
                         {pinned && (

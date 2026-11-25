@@ -6,7 +6,7 @@ import { DataList, parseBR, type Col, type FilterDef } from "./data-list";
 import { myRequests, type Ticket } from "./data";
 import { PriorityPill, StatusPill } from "./tickets-view";
 
-const rank = { Baixa: 0, Média: 1, Alta: 2 } as const;
+const rank = { Baixa: 0, Média: 1, Alta: 2, Urgente: 3 } as const;
 const uniq = (f: (t: Ticket) => string) => [...new Set(myRequests.map(f))].sort();
 
 const columns: Col<Ticket>[] = [
@@ -22,7 +22,7 @@ const columns: Col<Ticket>[] = [
 
 const filters: FilterDef<Ticket>[] = [
   { key: "status", label: "Status", kind: "select", options: uniq((t) => t.status), test: (t, v) => t.status === v },
-  { key: "priority", label: "Prioridade", kind: "select", options: ["Baixa", "Média", "Alta"], test: (t, v) => t.priority === v },
+  { key: "priority", label: "Prioridade", kind: "select", options: ["Baixa", "Média", "Alta", "Urgente"], test: (t, v) => t.priority === v },
   { key: "area", label: "Área", kind: "select", options: uniq((t) => t.origin), test: (t, v) => t.origin === v },
   { key: "owner", label: "Responsável", kind: "select", options: uniq((t) => t.owner), test: (t, v) => t.owner === v },
   { key: "from", label: "Alterado de", kind: "from", test: (t, v) => parseBR(t.updated) >= new Date(`${v}T00:00`).getTime() },
@@ -40,6 +40,8 @@ export function MinhasView() {
       trail={[{ label: "Dashboard", href: "/" }, { label: "Solicitações", href: "/solicitacoes" }, { label: "Minhas solicitações" }]}
       rows={myRequests}
       rowKey={(t) => t.code}
+      rowHref={(t) => `/solicitacoes/${t.code}`}
+      rowClass={(t) => t.priority === "Urgente" && "bg-danger-soft hover:bg-danger-soft"}
       columns={columns}
       search={(t) => `${t.code} ${t.title} ${t.subtitle} ${t.origin} ${t.owner}`}
       placeholder="Buscar código, motivo, área ou responsável"

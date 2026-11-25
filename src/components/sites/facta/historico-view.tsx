@@ -15,7 +15,7 @@ const interactions: Interaction[] = attended
   .flatMap((t) => historyFor(t).filter((e) => e.user === loginOf(currentUser.name)).map((e) => ({ id: `${t.code}-${e.id}`, date: e.date, time: e.time, ticket: t, text: e.text })))
   .sort((a, b) => parseBR(`${b.date} ${b.time}`) - parseBR(`${a.date} ${a.time}`));
 
-const rank = { Baixa: 0, Média: 1, Alta: 2 } as const;
+const rank = { Baixa: 0, Média: 1, Alta: 2, Urgente: 3 } as const;
 const uniq = (vals: string[]) => [...new Set(vals)].sort();
 const link = (t: Ticket) => <Link href={`/solicitacoes/${t.code}`} className="font-semibold text-brand hover:underline">{t.code}</Link>;
 const reason = (t: Ticket) => (
@@ -53,7 +53,7 @@ const attendedCols: Col<Ticket>[] = [
 
 const attendedFilters: FilterDef<Ticket>[] = [
   { key: "status", label: "Status", kind: "select", options: uniq(attended.map((t) => t.status)), test: (t, v) => t.status === v },
-  { key: "priority", label: "Prioridade", kind: "select", options: ["Baixa", "Média", "Alta"], test: (t, v) => t.priority === v },
+  { key: "priority", label: "Prioridade", kind: "select", options: ["Baixa", "Média", "Alta", "Urgente"], test: (t, v) => t.priority === v },
   { key: "from", label: "Alterado de", kind: "from", test: (t, v) => parseBR(t.updated) >= new Date(`${v}T00:00`).getTime() },
   { key: "to", label: "Alterado até", kind: "to", test: (t, v) => parseBR(t.updated) <= new Date(`${v}T23:59`).getTime() },
   { key: "code", label: "Código", kind: "text", more: true, test: (t, v) => String(t.code).includes(v.trim()) },
@@ -145,6 +145,8 @@ export function HistoricoView() {
           trail={trail}
           rows={attended}
           rowKey={(t) => t.code}
+          rowHref={(t) => `/solicitacoes/${t.code}`}
+          rowClass={(t) => t.priority === "Urgente" && "bg-danger-soft hover:bg-danger-soft"}
           columns={attendedCols}
           search={(t) => `${t.code} ${t.title} ${t.subtitle} ${t.requester} ${t.origin}`}
           placeholder="Buscar código, motivo, solicitante ou origem"
@@ -161,6 +163,7 @@ export function HistoricoView() {
           trail={trail}
           rows={interactions}
           rowKey={(i) => i.id}
+          rowHref={(i) => `/solicitacoes/${i.ticket.code}`}
           columns={interactionCols}
           search={(i) => `${i.ticket.code} ${i.ticket.title} ${i.ticket.requester} ${i.text}`}
           placeholder="Buscar código, solicitante ou descrição"

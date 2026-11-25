@@ -143,7 +143,7 @@ export const dashboardByScope: Record<
 
 export const urgentTicket = {
   code: 1000123,
-  priority: "Alta",
+  priority: "Urgente",
   text: "Computador da loja apresentando lentidão ao abrir o sistema. Solicita verificação do equipamento e atualização da ferramenta de acesso remoto.",
   sector: "Suporte Informática",
   opened: "13/07/2023 (850 dias)",
@@ -157,7 +157,7 @@ export const idleTickets = [
 
 /* ---------- Chamados do setor ---------- */
 
-export type Priority = "Baixa" | "Média" | "Alta";
+export type Priority = "Baixa" | "Média" | "Alta" | "Urgente";
 export type Status = "Em desenvolvimento" | "Pendente validação" | "Aguardando solicitante" | "Concluído – confirmação";
 
 export type Ticket = {
@@ -194,7 +194,7 @@ const ufs = ["RS", "RS", "SC", "RS", "PR", "ES", "RS", "RJ"];
 export const tickets: Ticket[] = Array.from({ length: 32 }, (_, i) => {
   const [title, subtitle] = titles[i % titles.length];
   const status: Status = i % 3 === 0 ? "Em desenvolvimento" : "Pendente validação";
-  const priority: Priority = i % 11 === 4 ? "Alta" : i % 5 === 2 ? "Média" : "Baixa";
+  const priority: Priority = i % 10 === 3 ? "Urgente" : i % 11 === 4 ? "Alta" : i % 5 === 2 ? "Média" : "Baixa";
   const day = 23 - (i % 12);
   const pad = (n: number) => String(n).padStart(2, "0");
   return {
@@ -235,7 +235,7 @@ function makeTicket(i: number, base: number, over: Partial<Ticket>): Ticket {
     code: base + i,
     title: reason,
     subtitle: ["Instalação", "Substituição", "Configuração", "Verificação"][i % 4],
-    priority: i % 9 === 4 ? "Alta" : i % 4 === 1 ? "Média" : "Baixa",
+    priority: i % 17 === 3 ? "Urgente" : i % 9 === 4 ? "Alta" : i % 4 === 1 ? "Média" : "Baixa",
     status: "Concluído – confirmação",
     origin: areasPool[i % areasPool.length],
     requester: currentUser.name,

@@ -6,6 +6,16 @@ import { cn } from "@/lib/utils";
 import { DatePicker } from "./date-picker";
 import { Select } from "./select";
 import { Breadcrumb } from "./dashboard-view";
+import { useRouter } from "next/navigation";
+
+/** Clique em qualquer parte da linha abre o chamado (links, botões e seleção de texto seguem normais). */
+export function rowClick(go: () => void) {
+  return (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest("a,button,input,select,textarea,label")) return;
+    if (window.getSelection()?.toString()) return;
+    go();
+  };
+}
 
 /** "dd/mm/aaaa" ou "dd/mm/aaaa hh:mm[:ss]" → milissegundos. */
 export const parseBR = (s: string) => {
@@ -23,6 +33,10 @@ type Props<T> = {
   trail: { label: string; href?: string }[];
   rows: T[];
   rowKey: (r: T) => string | number;
+  /** Se informado, clicar em qualquer parte da linha leva a este endereço. */
+  rowHref?: (r: T) => string;
+  /** Classe extra por linha (ex.: destaque de urgentes). */
+  rowClass?: (r: T) => string | false | undefined;
   columns: Col<T>[];
   search: (r: T) => string;
   placeholder: string;
@@ -37,7 +51,7 @@ type Props<T> = {
 
 const input = "h-11 w-full rounded-xl border border-line bg-white px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
 
-export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, columns, search, placeholder, filters, toggle, header, defaultSort, noun }: Props<T>) {
+export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHref, rowClass, columns, search, placeholder, filters, toggle, header, defaultSort, noun }: Props<T>) {
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
   const [more, setMore] = useState(false);
@@ -79,6 +93,7 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, colum
     apply({});
   };
 
+  const router = useRouter();
   const field = (f: FilterDef<T>) => (
     <label key={f.key} className="block text-[14px] font-semibold">
       <span className="mb-1 block">{f.label}</span>
@@ -185,7 +200,7 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, colum
             </thead>
             <tbody>
               {view.map((r) => (
-                <tr key={rowKey(r)} className="border-b border-line hover:bg-brand-soft/40">
+                <tr key={rowKey(r)} onClick={rowHref ? rowClick(() => router.push(rowHref(r))) : undefined} className={cn("border-b border-line hover:bg-brand-soft/40", rowHref && "cursor-pointer", rowClass?.(r))}>
                   {columns.map((c) => (
                     <td key={c.key} className={c.className}>
                       {c.render(r)}
