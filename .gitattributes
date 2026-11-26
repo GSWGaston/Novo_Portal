@@ -7,3 +7,8 @@
 # Batch files must always use CRLF
 *.bat text eol=crlf
 *.cmd text eol=crlf
+# PDFs e imagens são binários: sem conversão de fim de linha (o Git corrompia os PDFs no Windows)
+*.pdf binary
+*.png binary
+*.jpg binary
+*.webp binary
