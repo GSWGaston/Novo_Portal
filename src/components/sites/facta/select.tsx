@@ -28,7 +28,7 @@ type Props = {
 type Pos = { left: number; width: number; top?: number; bottom?: number; maxH: number };
 
 const triggerBase =
-  "flex h-11 w-full items-center gap-2 rounded-xl border border-line bg-white px-3 text-left text-[14px] outline-none transition-colors focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/15 disabled:cursor-default motion-reduce:transition-none";
+  "flex h-11 w-full items-center gap-2 rounded-xl border border-line bg-paper px-3 text-left text-[14px] outline-none transition-colors focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/15 disabled:cursor-default motion-reduce:transition-none";
 
 /** Dropdown no padrão do portal: painel claro, pesquisa opcional, teclado completo. */
 export function Select({ id, value, onChange, options, placeholder = "Selecione", disabled, searchable, icon, className, ...aria }: Props) {
@@ -156,7 +156,7 @@ export function Select({ id, value, onChange, options, placeholder = "Selecione"
             data-floating=""
             onKeyDown={onKeyDown}
             style={{ left: pos.left, width: pos.width, top: pos.top, bottom: pos.bottom, maxHeight: pos.maxH }}
-            className="fixed z-[100] flex flex-col overflow-hidden rounded-2xl border border-line bg-white p-1.5 text-[14px] text-ink shadow-[0_12px_32px_-8px_rgba(11,31,77,0.25)]"
+            className="fixed z-[100] flex flex-col overflow-hidden rounded-2xl border border-line bg-paper p-1.5 text-[14px] text-ink shadow-[0_12px_32px_-8px_rgba(11,31,77,0.25)]"
           >
             {withSearch && (
               <div className="relative mb-1.5 shrink-0">

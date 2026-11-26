@@ -12,6 +12,8 @@ import {
   Phone,
   Reply,
   Search,
+  Network,
+  Copy,
   X,
   Tag,
   User,
@@ -23,13 +25,14 @@ import { Select } from "./select";
 import { Breadcrumb } from "./dashboard-view";
 import { currentUser, historyFor, initials, loginOf, type HistoryEntry, type Priority, type Status, type Ticket } from "./data";
 import { PriorityPill, StatusPill } from "./tickets-view";
+import { TicketRelated } from "./ticket-related";
 
 const STATUSES: Status[] = ["Em desenvolvimento", "Pendente validação", "Aguardando solicitante", "Concluído – confirmação"];
 const PRIORITIES: Priority[] = ["Baixa", "Média", "Alta", "Urgente"];
 const CLASSES = ["Erro", "Dúvida", "Solicitação", "Melhoria"];
 const CONTACTS = ["Portal", "Telefone", "E-mail", "Presencial"];
 
-const card = "rounded-3xl border border-white bg-white/90 shadow-card";
+const card = "rounded-3xl border border-paper bg-paper/90 shadow-card";
 
 function Side({ icon: Icon, title, children }: { icon: typeof User; title: string; children: React.ReactNode }) {
   return (
@@ -42,14 +45,25 @@ function Side({ icon: Icon, title, children }: { icon: typeof User; title: strin
   );
 }
 
-function Row({ k, v }: { k: string; v: string }) {
+function Row({ k, v, onCopy }: { k: string; v: string; onCopy?: () => void }) {
   return (
     <div className="flex items-center justify-between gap-4 border-b border-line py-2.5 text-[14px] last:border-0">
       <span className="text-ink-soft">{k}</span>
-      <span className="font-bold">{v}</span>
+      <span className="flex items-center gap-1 font-bold tabular">
+        {v}
+        {onCopy && (
+          <button type="button" onClick={onCopy} aria-label={`Copiar ${k}`} title={`Copiar ${k}`} className="-my-2 -mr-2 flex size-9 coarse:size-11 items-center justify-center rounded-lg text-ink-soft hover:bg-brand-soft hover:text-brand">
+            <Copy className="size-4" />
+          </button>
+        )}
+      </span>
     </div>
   );
 }
+
+// dados fictícios do solicitante, estáveis por chamado
+const CARGOS = ["Supervisor(a) de vendas", "Consultor(a) comercial", "Analista administrativo", "Assistente financeiro", "Coordenador(a) de loja", "Analista de RH"];
+const tvId = (n: number) => String(n * 7919).slice(-9).replace(/(\d{1})(\d{3})(\d{3})(\d{2})/, "$1 $2 $3 $4");
 
 export function TicketDetail({ ticket }: { ticket: Ticket }) {
   const [entries, setEntries] = useState<HistoryEntry[]>(() => historyFor(ticket));
@@ -161,7 +175,7 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
             <div className="mt-5 flex">
               <label className="relative block w-full sm:w-[320px]">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-soft" />
-                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar no histórico..." className="h-10 w-full rounded-xl border border-line bg-white pl-9 pr-3 text-[14px] outline-none focus:border-brand" />
+                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar no histórico..." className="h-10 w-full rounded-xl border border-line bg-paper pl-9 pr-3 text-[14px] outline-none focus:border-brand" />
               </label>
             </div>
 
@@ -258,7 +272,7 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
                 aria-invalid={replyErr}
                 aria-describedby={replyErr ? "t-reply-err" : undefined}
                 placeholder="Informe o comentário aqui"
-                className={cn("w-full resize-y rounded-2xl border bg-white p-4 text-[16px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15", replyErr ? "border-danger" : "border-line")}
+                className={cn("w-full resize-y rounded-2xl border bg-paper p-4 text-[16px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15", replyErr ? "border-danger" : "border-line")}
               />
               {replyErr && <p id="t-reply-err" className="mt-1 text-[14px] font-medium text-danger-ink">Informe o comentário.</p>}
             </div>
@@ -290,7 +304,7 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
               <button type="submit" className="h-11 rounded-xl bg-brand px-8 text-[16px] font-bold text-white transition hover:bg-brand-dark">
                 Gravar
               </button>
-              <Link href="/solicitacoes/setores" className="flex h-11 items-center rounded-xl border border-line bg-white px-8 text-[16px] font-bold hover:bg-surface">
+              <Link href="/solicitacoes/setores" className="flex h-11 items-center rounded-xl border border-line bg-paper px-8 text-[16px] font-bold hover:bg-surface">
                 Voltar
               </Link>
             </div>
@@ -303,22 +317,28 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
               <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[18px] font-bold text-brand">{initials(ticket.requester)}</span>
               <div>
                 <p className="text-[16px] font-bold">{ticket.requester}</p>
+                <p className="text-[14px] font-semibold text-brand">{CARGOS[ticket.code % CARGOS.length]}</p>
                 <p className="text-[14px] text-ink-soft">{ticket.origin}</p>
                 <p className="text-[14px] text-ink-soft">{ticket.uf}</p>
               </div>
             </div>
             <div className="mt-4 space-y-2 text-[14px]">
               <p className="flex items-center gap-3"><Mail className="size-4 text-ink-soft" /> solicitante@exemplo.com.br</p>
-              <p className="flex items-center gap-3"><Phone className="size-4 text-ink-soft" /> (00) 0000-0000</p>
+              <p className="flex items-center gap-3"><Phone className="size-4 text-ink-soft" /> Ramal 0000</p>
             </div>
           </Side>
 
           <Side icon={Monitor} title="Informações técnicas">
-            <Row k="Código" v={String(ticket.code)} />
-            <Row k="Ramal" v="0000" />
+            <Row k={ticket.code % 4 === 0 ? "Usuário / aberto por" : "Usuário e abertura"} v={ticket.code % 4 === 0 ? `${loginOf(ticket.requester)} / ${loginOf(ticket.owner || currentUser.name)}` : loginOf(ticket.requester)} />
+            <Row k="Código" v={String(22000 + (ticket.code % 1000) * 7)} />
             <Row k="IP" v="10.0.0.00" />
+            <Row k="TeamViewer" v={tvId(ticket.code)} onCopy={() => (navigator.clipboard?.writeText(tvId(ticket.code).replace(/\s/g, "")), notify("ID do TeamViewer copiado."))} />
             <Row k="Computador" v={`PFC-${String(ticket.code).slice(-4)}`} />
             <Row k="Sistema operacional" v="Windows 10 Pro" />
+          </Side>
+
+          <Side icon={Network} title="Chamados relacionados">
+            <TicketRelated code={ticket.code} onLog={(text) => add({ user: loginOf(currentUser.name), text, auto: true })} />
           </Side>
         </aside>
       </div>

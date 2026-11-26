@@ -4,7 +4,7 @@ import { ListChecks } from "lucide-react";
 import Link from "next/link";
 import { DataList, parseBR, type Col, type FilterDef } from "./data-list";
 import { myRequests, type Ticket } from "./data";
-import { PriorityPill, StatusPill } from "./tickets-view";
+import { OwnerTag, PriorityPill, StatusPill } from "./tickets-view";
 
 const rank = { Baixa: 0, Média: 1, Alta: 2, Urgente: 3 } as const;
 const uniq = (f: (t: Ticket) => string) => [...new Set(myRequests.map(f))].sort();
@@ -14,7 +14,7 @@ const columns: Col<Ticket>[] = [
   { key: "code", label: "Código", sort: (t) => t.code, render: (t) => <Link href={`/solicitacoes/${t.code}`} className="font-semibold text-brand hover:underline">{t.code}</Link> },
   { key: "reason", label: "Motivo", sort: (t) => t.title, render: (t) => <><span className="block font-bold">{t.title}</span><span className="block text-[12px] text-ink-soft">{t.subtitle}</span></> },
   { key: "area", label: "Área", sort: (t) => t.origin, render: (t) => t.origin },
-  { key: "owner", label: "Responsável", sort: (t) => t.owner, render: (t) => t.owner || "—" },
+  { key: "owner", label: "Responsável", sort: (t) => t.owner, render: (t) => <OwnerTag name={t.owner} /> },
   { key: "opened", label: "Solicitado", sort: (t) => parseBR(t.opened), render: (t) => t.opened },
   { key: "updated", label: "Atualizado", sort: (t) => parseBR(t.updated), render: (t) => t.updated },
   { key: "status", label: "Status", sort: (t) => t.status, render: (t) => <StatusPill s={t.status} /> },

@@ -48,7 +48,7 @@ const toTime = (s: string) => {
 };
 const uniq = (k: keyof Ticket) => [...new Set(tickets.map((t) => String(t[k])).filter(Boolean))].sort();
 
-const input = "h-11 w-full rounded-xl border border-line bg-white px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
+const input = "h-11 w-full rounded-xl border border-line bg-paper px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -71,6 +71,22 @@ const statusStyle: Record<string, { icon: typeof Check; tone: string }> = {
   "Aguardando solicitante": { icon: Clock, tone: "bg-warn-soft text-warn-ink" },
   "Concluído – confirmação": { icon: Check, tone: "bg-ok-soft text-ok-ink" },
 };
+
+// tons pastéis: a cor é escolhida pelo nome, então cada responsável mantém sempre a mesma
+const PASTELS = [
+  "bg-[#e3ecff] text-[#1d3f8a] dark:bg-[#1d3f8a]/45 dark:text-[#c3d5ff]",
+  "bg-[#dff5e7] text-[#18603a] dark:bg-[#18603a]/45 dark:text-[#aee8c5]",
+  "bg-[#fdeccf] text-[#7a4a06] dark:bg-[#7a4a06]/45 dark:text-[#f8d59c]",
+  "bg-[#f1e4fb] text-[#5b2a86] dark:bg-[#5b2a86]/45 dark:text-[#dcc3f3]",
+  "bg-[#fde2e7] text-[#8a1f3a] dark:bg-[#8a1f3a]/45 dark:text-[#f6bccb]",
+  "bg-[#d9f3f3] text-[#0f5b5c] dark:bg-[#0f5b5c]/45 dark:text-[#a6e3e3]",
+  "bg-[#fff3c4] text-[#6b5300] dark:bg-[#6b5300]/45 dark:text-[#f3df8f]",
+];
+export function OwnerTag({ name }: { name?: string }) {
+  if (!name) return <span className="inline-flex whitespace-nowrap rounded-full bg-surface px-2.5 py-1 text-[13px] font-semibold text-ink-soft ring-1 ring-line">Sem responsável</span>;
+  const hash = [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+  return <span className={cn("inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-[13px] font-semibold", PASTELS[hash % PASTELS.length])}>{name}</span>;
+}
 
 export function StatusPill({ s }: { s: string }) {
   const { icon: Icon, tone } = statusStyle[s] ?? { icon: RefreshCw, tone: "bg-surface text-ink-soft" };
@@ -222,7 +238,7 @@ export function TicketsView() {
         </h1>
       </div>
 
-      <section className="overflow-hidden rounded-3xl border border-white bg-white/90 shadow-card">
+      <section className="overflow-hidden rounded-3xl border border-paper bg-paper/90 shadow-card">
         <div className="flex flex-wrap items-center gap-4 bg-navy px-6 py-5">
           <label className="flex h-12 w-full max-w-[520px] items-center gap-3 rounded-xl border border-white/15 bg-white/10 px-4 text-white focus-within:bg-white/15">
             <Search className="size-5 shrink-0" />
@@ -242,7 +258,7 @@ export function TicketsView() {
             onClick={() => setExact((e) => !e)}
             className={cn(
               "ml-auto flex h-12 items-center gap-2 rounded-xl border px-5 text-[16px] font-bold transition",
-              exact ? "border-white bg-white text-navy" : "border-white/25 bg-white/10 text-white hover:bg-white/20",
+              exact ? "border-paper bg-paper text-navy" : "border-white/25 bg-white/10 text-white hover:bg-white/20",
             )}
           >
             <Check className={cn("size-4", !exact && "opacity-0")} /> Busca exata
@@ -275,7 +291,7 @@ export function TicketsView() {
                 {more ? "Menos filtros" : "Mais filtros"} <ChevronDown className={cn("size-4 transition motion-reduce:transition-none", more && "rotate-180")} />
               </button>
               <div className="flex gap-3">
-                <button type="button" onClick={clearAll} className="flex h-11 items-center gap-2 rounded-xl border border-[#c9d5ea] bg-white px-5 text-[14px] font-bold hover:bg-surface">
+                <button type="button" onClick={clearAll} className="flex h-11 items-center gap-2 rounded-xl border border-[#c9d5ea] dark:border-line bg-paper px-5 text-[14px] font-bold hover:bg-surface">
                   <X className="size-4" /> Limpar filtros
                 </button>
                 <button type="button" onClick={() => apply(draft)} className="flex h-11 items-center gap-2 rounded-xl bg-brand px-6 text-[14px] font-bold text-white hover:bg-brand-dark">
@@ -385,7 +401,7 @@ export function TicketsView() {
                             }}
                             onPointerCancel={endDrag}
                             onLostPointerCapture={endDrag}
-                            className={cn("absolute left-1 top-1/2 flex h-10 w-6 coarse:left-0 coarse:h-12 coarse:w-11 -translate-y-1/2 cursor-grab touch-none items-center justify-center rounded-md border border-line bg-white text-ink-soft shadow-md transition active:cursor-grabbing focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-brand group-hover/row:opacity-100 [@media(hover:none)]:opacity-100 motion-reduce:transition-none", dragging === t.code ? "scale-110 opacity-100 ring-2 ring-brand" : "opacity-0")}
+                            className={cn("absolute left-1 top-1/2 flex h-10 w-6 coarse:left-0 coarse:h-12 coarse:w-11 -translate-y-1/2 cursor-grab touch-none items-center justify-center rounded-md border border-line bg-paper text-ink-soft shadow-md transition active:cursor-grabbing focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-brand group-hover/row:opacity-100 [@media(hover:none)]:opacity-100 motion-reduce:transition-none", dragging === t.code ? "scale-110 opacity-100 ring-2 ring-brand" : "opacity-0")}
                           >
                             <GripVertical className="size-4" />
                           </button>
@@ -404,22 +420,22 @@ export function TicketsView() {
                       <td className="whitespace-nowrap px-3"><PriorityPill p={t.priority} /></td>
                       <td className="whitespace-nowrap px-3"><StatusPill s={t.status} /></td>
                       <td className="px-2.5"><span className="block">{t.requester}</span><span className="block text-[12px] text-ink-soft">{t.origin}</span></td>
-                      <td className="px-3">{t.owner || "—"}</td>
+                      <td className="px-3"><OwnerTag name={t.owner} /></td>
                       <td className="px-3"><span className="block">{t.updated}</span><span className="block text-[12px] text-ink-soft">{t.days} dias</span></td>
                     </tr>
                     {isOpen && (
                       <tr className="border-b border-line bg-surface/60">
                         <td colSpan={8} className="p-4">
                           <div className="grid gap-4 lg:grid-cols-3">
-                            <div className="rounded-2xl border border-line bg-white p-4">
+                            <div className="rounded-2xl border border-line bg-paper p-4">
                               <p className="flex items-center gap-2 font-bold"><MessageSquare className="size-4 text-brand" /> Primeira interação <span className="text-[12px] font-normal text-ink-soft">{t.opened}</span></p>
                               <p className="mt-3 rounded-xl bg-surface p-3">{t.firstMessage}</p>
                             </div>
-                            <div className="rounded-2xl border border-line bg-white p-4">
+                            <div className="rounded-2xl border border-line bg-paper p-4">
                               <p className="flex items-center gap-2 font-bold"><RefreshCw className="size-4 text-brand" /> Última interação <span className="text-[12px] font-normal text-ink-soft">{t.updated}</span></p>
                               <p className="mt-3 rounded-xl bg-surface p-3">{t.lastMessage}</p>
                             </div>
-                            <div className="rounded-2xl border border-line bg-white p-4">
+                            <div className="rounded-2xl border border-line bg-paper p-4">
                               <p className="flex items-center gap-2 font-bold"><Info className="size-4 text-brand" /> Informações do chamado</p>
                               <dl className="mt-3 space-y-1 text-[14px]">
                                 {[["Solicitante", t.requester], ["Setor", t.origin], ["Responsável", t.owner || "—"], ["Abertura", t.opened], ["Última atualização", t.updated]].map(([k, v]) => (
@@ -442,7 +458,7 @@ export function TicketsView() {
                   <td colSpan={8} className="py-12 text-center">
                     <p className="text-[16px] font-bold">Nenhum chamado encontrado</p>
                     <p className="mt-1 text-[14px] text-ink-soft">Tente outros termos ou remova a busca e os filtros.</p>
-                    <button type="button" onClick={() => { setQ(""); clearAll(); }} className="mt-4 inline-flex h-11 items-center gap-2 rounded-xl border border-line bg-white px-5 text-[14px] font-bold hover:bg-brand-soft">
+                    <button type="button" onClick={() => { setQ(""); clearAll(); }} className="mt-4 inline-flex h-11 items-center gap-2 rounded-xl border border-line bg-paper px-5 text-[14px] font-bold hover:bg-brand-soft">
                       Limpar busca e filtros
                     </button>
                   </td>
@@ -455,11 +471,11 @@ export function TicketsView() {
         <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-6 py-5">
           <p className="flex items-center gap-2 text-[16px] font-bold"><Layers className="size-5 text-brand" /> {rows.length === 0 ? "Nenhum chamado" : rows.length === 1 ? "1 chamado encontrado" : `${rows.length} chamados encontrados`}</p>
           <div className="flex flex-wrap items-center gap-3">
-            <button type="button" disabled={cur === 1} onClick={() => setPage(cur - 1)} className="flex h-10 coarse:h-11 items-center gap-1 rounded-xl border border-line bg-white px-3 text-[14px] disabled:opacity-40"><ChevronLeft className="size-4" /> Página anterior</button>
+            <button type="button" disabled={cur === 1} onClick={() => setPage(cur - 1)} className="flex h-10 coarse:h-11 items-center gap-1 rounded-xl border border-line bg-paper px-3 text-[14px] disabled:opacity-40"><ChevronLeft className="size-4" /> Página anterior</button>
             {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
-              <button key={n} type="button" aria-current={n === cur} onClick={() => setPage(n)} className={cn("size-10 coarse:size-11 rounded-xl border text-[14px] font-bold", n === cur ? "border-brand bg-brand text-white" : "border-line bg-white")}>{n}</button>
+              <button key={n} type="button" aria-current={n === cur} onClick={() => setPage(n)} className={cn("size-10 coarse:size-11 rounded-xl border text-[14px] font-bold", n === cur ? "border-brand bg-brand text-white" : "border-line bg-paper")}>{n}</button>
             ))}
-            <button type="button" disabled={cur === pages} onClick={() => setPage(cur + 1)} className="flex h-10 coarse:h-11 items-center gap-1 rounded-xl border border-line bg-white px-3 text-[14px] disabled:opacity-40">Próxima página <ChevronRight className="size-4" /></button>
+            <button type="button" disabled={cur === pages} onClick={() => setPage(cur + 1)} className="flex h-10 coarse:h-11 items-center gap-1 rounded-xl border border-line bg-paper px-3 text-[14px] disabled:opacity-40">Próxima página <ChevronRight className="size-4" /></button>
             <label className="ml-3 flex items-center gap-2 text-[14px]">Exibir
               <Select value={String(size)} onChange={(v) => { setSize(Number(v)); setPage(1); }} options={[10, 30, 50].map((n) => ({ value: String(n), label: `${n} por página` }))} aria-label="Itens por página" className="h-10 coarse:h-11 w-auto min-w-[9.5rem] px-3 font-semibold" />
             </label>

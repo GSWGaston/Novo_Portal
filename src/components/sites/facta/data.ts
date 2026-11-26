@@ -8,18 +8,22 @@ export type PortalApp = {
   icon: "calendar" | "cogs" | "headset" | "users" | "trend" | "bars";
   tone: "red" | "blue" | "green" | "purple" | "orange" | "indigo" | "cyan" | "violet";
   href: string;
+  /** Sistema existe, mas não pode ser aberto: sem permissão ou votação encerrada. */
+  blocked?: "permissao" | "votacao";
+  /** PDF que abre no leitor, em vez de uma tela. */
+  read?: string;
 };
 
 export const portalApps: PortalApp[] = [
-  { title: "Agenda Comercial", description: "Compromissos, visitas e agenda da equipe comercial.", icon: "calendar", tone: "red", href: "#" },
+  { title: "Agenda Comercial", description: "Compromissos, visitas e agenda da equipe comercial.", icon: "calendar", tone: "red", href: "#", blocked: "permissao" },
   { title: "Solicitações", description: "Abertura e acompanhamento de chamados internos.", icon: "cogs", tone: "blue", href: "/solicitacoes" },
-  { title: "Prospecção Ativa de Clientes", description: "Gestão e acompanhamento de prospecções.", icon: "headset", tone: "green", href: "#" },
-  { title: "RH", description: "Serviços, documentos e solicitações de Recursos Humanos.", icon: "users", tone: "purple", href: "#" },
-  { title: "CIPA 2026", description: "Informações, documentos e ações da CIPA.", icon: "trend", tone: "orange", href: "#" },
-  { title: "Pesquisa de Clima 2023", description: "Resultados e análises da pesquisa de clima.", icon: "trend", tone: "indigo", href: "#" },
-  { title: "Avaliação de Desempenho", description: "Acompanhamento de metas e avaliações.", icon: "bars", tone: "cyan", href: "#" },
-  { title: "Pesquisa FIA", description: "Participação e resultados da Pesquisa FIA.", icon: "bars", tone: "cyan", href: "#" },
-  { title: "Resultados Pesquisa de Clima GPTW", description: "Resultados e indicadores da pesquisa GPTW.", icon: "trend", tone: "violet", href: "#" },
+  { title: "Prospecção Ativa de Clientes", description: "Gestão e acompanhamento de prospecções.", icon: "headset", tone: "green", href: "#", blocked: "permissao" },
+  { title: "RH", description: "Serviços, documentos e solicitações de Recursos Humanos.", icon: "users", tone: "purple", href: "/meu-rh/dados" },
+  { title: "CIPA 2026", description: "Informações, documentos e ações da CIPA.", icon: "trend", tone: "orange", href: "#", blocked: "votacao" },
+  { title: "Pesquisa de Clima 2026", description: "Responda à pesquisa de clima deste ano.", icon: "trend", tone: "indigo", href: "/pesquisa-clima" },
+  { title: "Avaliação de Desempenho", description: "Acompanhamento de metas e avaliações.", icon: "bars", tone: "cyan", href: "https://system.solides.com/pt-BR/solicitacao_avaliacoes/validar" },
+  { title: "Pesquisa FIA", description: "Participação e resultados da Pesquisa FIA.", icon: "bars", tone: "cyan", href: "https://feex.fia.com.br/#/login/empregado/" },
+  { title: "Resultados Pesquisa de Clima GPTW", description: "Resultados e indicadores da pesquisa GPTW.", icon: "trend", tone: "violet", href: "", read: "/sites/facta/docs/pesquisa-clima-gptw.pdf" },
 ];
 
 export type Announcement = {
@@ -57,7 +61,8 @@ export const announcements: Announcement[] = [
   },
 ];
 
-export type MenuItem = { label: string; href?: string; items?: MenuItem[] };
+/** `download`: caminho de um arquivo; o item baixa (com confirmação) em vez de abrir tela. `read`: PDF que abre no leitor. */
+export type MenuItem = { label: string; href?: string; download?: string; read?: string; items?: MenuItem[] };
 
 const soon = (label: string): MenuItem => ({ label, href: "#" });
 
@@ -70,39 +75,48 @@ export const navMenus: MenuItem[] = [
       { label: "Pendentes do setor", href: "/solicitacoes/setores" },
       { label: "Minhas solicitações", href: "/solicitacoes/minhas" },
       { label: "Histórico", href: "/solicitacoes/historico" },
+      { label: "Relatórios", items: [soon("Satisfação"), soon("Estatísticas")] },
     ],
   },
-  { label: "Relatórios", items: [soon("Satisfação"), soon("Estatísticas")] },
   {
-    label: "Diversos",
+    label: "Agenda",
     items: [
       { label: "Reservas de Salas", href: "/diversos/reservas" },
-      { label: "Buscar Colaborador", href: "/diversos/colaboradores" },
       { label: "Calendário de Compromissos", href: "/diversos/calendario" },
+      { label: "Atas de Reunião", href: "/diversos/atas" },
+      { label: "Projetos", href: "/diversos/projetos" },
+    ],
+  },
+  {
+    label: "Pessoas",
+    items: [
+      { label: "Buscar Colaborador", href: "/diversos/colaboradores" },
       { label: "Relação de Aniversários", href: "/diversos/aniversarios" },
       soon("Apoio Facta"),
-      { label: "Políticas SEGINFO", href: "/diversos/politicas" },
-      { label: "Atas de Reunião", href: "/diversos/atas" },
-      soon("Projetos"),
-      soon("Organograma Funcional"),
     ],
   },
   {
     label: "Recursos Humanos",
     items: [
-      soon("T&D"),
+      { label: "T&D", href: "/rh/td" },
       soon("Folha Ponto"),
-      { label: "Biblioteca", items: [soon("Livros"), soon("Peça um livro")] },
-      soon("Documentos Institucionais"),
-      { label: "Programas Institucionais", items: ["Convênios", "Cidadania Empresarial", "Facta em Foco", "Facta Forma", "Feito para você"].map(soon) },
-      { label: "Formulário de Feedback", items: ["Solicitar Feedback Lojas", "Consultar Feedback Lojas", "Consultar Feedback Operacional/Adm"].map(soon) },
-      soon("Cartilha de Conduta Profissional Facta"),
-      soon("Declaração de Ciência e Concordância (Entrega de Atestado)"),
+      { label: "Biblioteca", href: "/rh/biblioteca" },
+      { label: "Programas Institucionais", items: [{ label: "Convênios", href: "/rh/convenios" }, soon("Cidadania Empresarial"), { label: "Facta em Foco", href: "/rh/facta-em-foco" }, ...["Facta Forma", "Feito para você"].map(soon)] },
+      { label: "Formulário de Feedback", items: [{ label: "Solicitar Feedback", href: "/rh/feedback/novo" }, { label: "Consultar Feedback", href: "/rh/feedback" }] },
     ],
   },
-  { label: "Ajuda", items: [soon("FAQ"), { label: "Cadastro", items: [soon("FAQ")] }, soon("Banco de Idéias")] },
-  { label: "Código de Ética e Conduta", items: [soon("Facta Intermediação de Negócios")] },
-  { label: "Repositório", items: [soon("Pesquisa")] },
+  {
+    label: "Documentos",
+    items: [
+      { label: "Documentos Institucionais", href: "/rh/documentos" },
+      { label: "Políticas SEGINFO", href: "/diversos/politicas" },
+      { label: "Organograma Funcional", download: "/sites/facta/docs/organograma-funcional.pdf" },
+      { label: "Cartilha de Conduta Profissional Facta", read: "/sites/facta/docs/cartilha-conduta-profissional.pdf" },
+      { label: "Declaração de Ciência e Concordância (Entrega de Atestado)", download: "/sites/facta/docs/declaracao-entrega-atestado.pdf" },
+      { label: "Código de Ética e Conduta", download: "/sites/facta/docs/codigo-de-etica-e-conduta.pdf" },
+    ],
+  },
+  { label: "Ajuda", items: [{ label: "FAQ", href: "/ajuda/faq" }, { label: "Banco de Ideias", href: "/ajuda/ideias" }, { label: "Repositório", href: "/ajuda/repositorio" }] },
 ];
 
 export const notifications = [

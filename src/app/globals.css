@@ -5,10 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 @custom-variant coarse (@media (pointer: coarse));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+/* Tokens do portal Facta: em @theme (não inline) para os utilitários lerem a variável e o tema escuro poder trocá-la. */
+@theme {
   /* Facta portal design tokens */
   --color-ink: #0b1f4d;
   --color-ink-soft: #4b5b7c;
@@ -18,6 +16,8 @@
   --color-brand-soft: #e8f0ff;
   --color-line: #e1e9f6;
   --color-surface: #f3f7ff;
+  /* fundo de cartões, campos e painéis (branco no tema claro) */
+  --color-paper: #ffffff;
   --color-danger: #e5391f;
   --color-danger-soft: #fdeceb;
   --color-warn: #f08a00;
@@ -30,6 +30,12 @@
   --color-ink-mute: #66738f;
   --color-ok-soft: #e4f7ec;
   --shadow-card: 0 1px 2px rgba(11, 31, 77, 0.04), 0 8px 24px -8px rgba(11, 60, 150, 0.14);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -198,3 +204,41 @@
 .facta-glow-cyan { background-image: linear-gradient(to right, transparent, #e0f4f7); }
 .facta-tile-violet { background-image: linear-gradient(135deg, #8269d0, #7058c0); }
 .facta-glow-violet { background-image: linear-gradient(to right, transparent, #ece8fa); }
+
+/* ---------- Tema escuro do portal (classe .dark no <html>) ---------- */
+:root.dark {
+  color-scheme: dark;
+  --color-ink: #e6ecf8;
+  --color-ink-soft: #a8b5cf;
+  --color-ink-mute: #8a97b2;
+  --color-navy: #1f3f80;
+  --color-brand: #3d85ff;
+  --color-brand-dark: #2b6fe6;
+  --color-brand-soft: #172a4d;
+  --color-line: #26324d;
+  --color-surface: #111a2e;
+  --color-paper: #18223a;
+  --color-danger: #f2604c;
+  --color-danger-soft: #3b1d21;
+  --color-danger-ink: #ff9b8f;
+  --color-warn: #f59e2a;
+  --color-warn-soft: #382a12;
+  --color-warn-ink: #ffc46b;
+  --color-ok: #2fbf75;
+  --color-ok-soft: #13311f;
+  --color-ok-ink: #7ddca8;
+  --color-user: #9c7cf0;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -10px rgba(0, 0, 0, 0.55);
+}
+/* navy é fundo (com texto branco) e também cor de texto em avisos claros: como texto, no escuro, precisa clarear */
+.dark .text-navy { color: #c9d8f7; }
+.dark .facta-glow-red { background-image: linear-gradient(to right, transparent, #3b1d21); }
+.dark .facta-glow-blue { background-image: linear-gradient(to right, transparent, #172a4d); }
+.dark .facta-glow-green { background-image: linear-gradient(to right, transparent, #13311f); }
+.dark .facta-glow-purple { background-image: linear-gradient(to right, transparent, #2c1f3d); }
+.dark .facta-glow-orange { background-image: linear-gradient(to right, transparent, #382a12); }
+.dark .facta-glow-indigo { background-image: linear-gradient(to right, transparent, #212650); }
+.dark .facta-glow-cyan { background-image: linear-gradient(to right, transparent, #10303a); }
+.dark .facta-glow-violet { background-image: linear-gradient(to right, transparent, #271f45); }
+/* danger-ink clareia no escuro para virar texto legível; como fundo de selo (texto branco) precisa continuar forte */
+.dark .bg-danger-ink { background-color: #c62f1c; }

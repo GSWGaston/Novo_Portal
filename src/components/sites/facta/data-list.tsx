@@ -49,7 +49,7 @@ type Props<T> = {
   noun: [string, string];
 };
 
-const input = "h-11 w-full rounded-xl border border-line bg-white px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
+const input = "h-11 w-full rounded-xl border border-line bg-paper px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
 
 export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHref, rowClass, columns, search, placeholder, filters, toggle, header, defaultSort, noun }: Props<T>) {
   const [q, setQ] = useState("");
@@ -131,7 +131,7 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHr
         {header}
       </div>
 
-      <section className="overflow-hidden rounded-3xl border border-white bg-white/90 shadow-card">
+      <section className="overflow-hidden rounded-3xl border border-paper bg-paper/90 shadow-card">
         <div className="flex flex-wrap items-center gap-4 bg-navy px-6 py-5">
           <label className="flex h-12 w-full max-w-[520px] items-center gap-3 rounded-xl border border-white/15 bg-white/10 px-4 text-white focus-within:bg-white/15">
             <Search className="size-5 shrink-0" />
@@ -142,7 +142,7 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHr
               type="button"
               aria-pressed={showAll}
               onClick={() => { setShowAll((v) => !v); setPage(1); }}
-              className={cn("ml-auto flex h-12 items-center gap-2 rounded-xl border px-5 text-[16px] font-bold transition-colors motion-reduce:transition-none", showAll ? "border-white bg-white text-navy" : "border-white/25 bg-white/10 text-white hover:bg-white/20")}
+              className={cn("ml-auto flex h-12 items-center gap-2 rounded-xl border px-5 text-[16px] font-bold transition-colors motion-reduce:transition-none", showAll ? "border-paper bg-paper text-navy" : "border-white/25 bg-white/10 text-white hover:bg-white/20")}
             >
               {toggle.label}
             </button>
@@ -165,7 +165,7 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHr
                 <span />
               )}
               <div className="flex gap-3">
-                <button type="button" onClick={clearAll} className="flex h-11 items-center gap-2 rounded-xl border border-[#c9d5ea] bg-white px-5 text-[14px] font-bold hover:bg-surface">
+                <button type="button" onClick={clearAll} className="flex h-11 items-center gap-2 rounded-xl border border-[#c9d5ea] dark:border-line bg-paper px-5 text-[14px] font-bold hover:bg-surface">
                   <X className="size-4" /> Limpar filtros
                 </button>
                 <button type="button" onClick={() => apply(draft)} className="flex h-11 items-center gap-2 rounded-xl bg-brand px-6 text-[14px] font-bold text-white hover:bg-brand-dark">
@@ -213,7 +213,7 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHr
                   <td colSpan={columns.length} className="!whitespace-normal py-12 text-center">
                     <p className="text-[16px] font-bold">Nenhum registro encontrado</p>
                     <p className="mt-1 text-[14px] text-ink-soft">Tente outros termos ou remova a busca e os filtros.</p>
-                    <button type="button" onClick={() => { setQ(""); clearAll(); }} className="mt-4 inline-flex h-11 items-center gap-2 rounded-xl border border-line bg-white px-5 text-[14px] font-bold hover:bg-brand-soft">
+                    <button type="button" onClick={() => { setQ(""); clearAll(); }} className="mt-4 inline-flex h-11 items-center gap-2 rounded-xl border border-line bg-paper px-5 text-[14px] font-bold hover:bg-brand-soft">
                       Limpar busca e filtros
                     </button>
                   </td>
@@ -228,15 +228,15 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHr
             <Layers className="size-5 text-brand" /> {rows.length === 0 ? `Nenhum ${noun[0]}` : rows.length === 1 ? `1 ${noun[0]} encontrado` : `${rows.length} ${noun[1]} encontrados`}
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <button type="button" disabled={cur === 1} onClick={() => setPage(cur - 1)} className="flex h-10 coarse:h-11 items-center gap-1 rounded-xl border border-line bg-white px-3 text-[14px] disabled:opacity-40">
+            <button type="button" disabled={cur === 1} onClick={() => setPage(cur - 1)} className="flex h-10 coarse:h-11 items-center gap-1 rounded-xl border border-line bg-paper px-3 text-[14px] disabled:opacity-40">
               <ChevronLeft className="size-4" /> Página anterior
             </button>
             {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
-              <button key={n} type="button" aria-current={n === cur} onClick={() => setPage(n)} className={cn("size-10 coarse:size-11 rounded-xl border text-[14px] font-bold", n === cur ? "border-brand bg-brand text-white" : "border-line bg-white")}>
+              <button key={n} type="button" aria-current={n === cur} onClick={() => setPage(n)} className={cn("size-10 coarse:size-11 rounded-xl border text-[14px] font-bold", n === cur ? "border-brand bg-brand text-white" : "border-line bg-paper")}>
                 {n}
               </button>
             ))}
-            <button type="button" disabled={cur === pages} onClick={() => setPage(cur + 1)} className="flex h-10 coarse:h-11 items-center gap-1 rounded-xl border border-line bg-white px-3 text-[14px] disabled:opacity-40">
+            <button type="button" disabled={cur === pages} onClick={() => setPage(cur + 1)} className="flex h-10 coarse:h-11 items-center gap-1 rounded-xl border border-line bg-paper px-3 text-[14px] disabled:opacity-40">
               Próxima página <ChevronRight className="size-4" />
             </button>
             <label className="ml-3 flex items-center gap-2 text-[14px]">

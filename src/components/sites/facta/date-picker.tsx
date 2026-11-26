@@ -129,7 +129,7 @@ export function DatePicker({ id, value, onChange, placeholder = "dd/mm/aaaa", cl
         aria-expanded={open}
         onClick={() => (open ? close(false) : openMenu())}
         className={cn(
-          "flex h-11 w-full items-center gap-2 rounded-xl border border-line bg-white px-3 text-left text-[14px] outline-none transition-colors focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/15 motion-reduce:transition-none",
+          "flex h-11 w-full items-center gap-2 rounded-xl border border-line bg-paper px-3 text-left text-[14px] outline-none transition-colors focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/15 motion-reduce:transition-none",
           !selected && "text-ink-soft",
           className,
         )}
@@ -148,7 +148,7 @@ export function DatePicker({ id, value, onChange, placeholder = "dd/mm/aaaa", cl
             aria-label="Escolher data"
             onKeyDown={onKeyDown}
             style={{ left: pos.left, top: pos.top, bottom: pos.bottom, width: W }}
-            className="fixed z-[100] max-w-[calc(100vw-16px)] rounded-2xl border border-line bg-white p-3 text-[14px] text-ink shadow-[0_12px_32px_-8px_rgba(11,31,77,0.25)]"
+            className="fixed z-[100] max-w-[calc(100vw-16px)] rounded-2xl border border-line bg-paper p-3 text-[14px] text-ink shadow-[0_12px_32px_-8px_rgba(11,31,77,0.25)]"
           >
             <div className="mb-2 flex items-center justify-between">
               <button type="button" onClick={() => setFocus(addMonths(focus, -1))} aria-label="Mês anterior" className={nav}>

@@ -41,14 +41,14 @@ export function AniversariosView() {
   return (
     <div className="space-y-6">
       <div>
-        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Diversos" }, { label: "Relação de Aniversários" }]} />
+        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Pessoas" }, { label: "Relação de Aniversários" }]} />
         <h1 className="mt-3 flex items-center gap-3 text-[32px] font-extrabold leading-none tracking-tight">
           <Cake className="size-8 text-brand" strokeWidth={1.8} /> Relação de Aniversários
         </h1>
         <p className="mt-2 text-[16px] text-ink-soft">Veja quem faz aniversário em cada mês.</p>
       </div>
 
-      <section className="overflow-hidden rounded-3xl border border-white bg-white/90 shadow-card">
+      <section className="overflow-hidden rounded-3xl border border-paper bg-paper/90 shadow-card">
         <div className="flex flex-wrap items-center gap-3 bg-navy px-6 py-5">
           <div className="flex items-center gap-2">
             <button type="button" onClick={() => step(-1)} aria-label="Mês anterior" className={navBtn}>
@@ -68,7 +68,7 @@ export function AniversariosView() {
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-4 px-6 pt-5">
-          <div role="radiogroup" aria-label="Tipo de unidade" className="inline-flex gap-1 rounded-2xl border border-line bg-white p-1">
+          <div role="radiogroup" aria-label="Tipo de unidade" className="inline-flex gap-1 rounded-2xl border border-line bg-paper p-1">
             {kinds.map((k) => (
               <button
                 key={k}
@@ -101,7 +101,7 @@ export function AniversariosView() {
                 const isToday = p.day === today.getDate() && p.month === today.getMonth();
                 const wd = WEEKDAYS[new Date(year, p.month, p.day).getDay()];
                 return (
-                  <li key={p.id} className={cn("flex items-center gap-3 rounded-2xl border bg-white p-3 shadow-sm", isToday ? "border-brand" : "border-line")}>
+                  <li key={p.id} className={cn("flex items-center gap-3 rounded-2xl border bg-paper p-3 shadow-sm", isToday ? "border-brand" : "border-line")}>
                     <span className={cn("flex size-14 shrink-0 flex-col items-center justify-center rounded-xl", isToday ? "bg-brand text-white" : "bg-brand-soft text-brand")} aria-label={`Dia ${p.day}, ${wd}`}>
                       <span className="text-[20px] font-bold leading-none">{p.day}</span>
                       <span className="mt-0.5 text-[12px] font-semibold uppercase leading-none">{wd}</span>

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const field =
-  "flex h-14 items-center gap-3 rounded-xl border border-[#cfd9ea] bg-white px-4 text-ink-soft transition focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/15";
+  "flex h-14 items-center gap-3 rounded-xl border border-[#cfd9ea] dark:border-line bg-paper px-4 text-ink-soft transition focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/15";
 
 export function LoginForm() {
   const router = useRouter();

@@ -68,7 +68,7 @@ const overlap = (a: { start: string; end: string }, b: { start: string; end: str
 
 /* ---------- modal ---------- */
 
-const control = "h-11 w-full rounded-xl border bg-white px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
+const control = "h-11 w-full rounded-xl border bg-paper px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
 
 function Err({ m }: { m?: string }) {
   return m ? <p className="mt-1 text-[14px] font-medium text-danger-ink">{m}</p> : null;
@@ -126,7 +126,7 @@ function ReservaModal({ draft, all, onSave, onClose }: { draft: Draft; all: Rese
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#041b45]/55 p-4 backdrop-blur-[3px]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <form ref={box} role="dialog" aria-modal="true" aria-labelledby="res-title" noValidate onSubmit={submit} className="max-h-[94vh] w-full max-w-[640px] overflow-y-auto rounded-[28px] bg-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] [animation:facta-pop_.25s_ease-out] motion-reduce:[animation:none]">
+      <form ref={box} role="dialog" aria-modal="true" aria-labelledby="res-title" noValidate onSubmit={submit} className="max-h-[94vh] w-full max-w-[640px] overflow-y-auto rounded-[28px] bg-paper shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] [animation:facta-pop_.25s_ease-out] motion-reduce:[animation:none]">
         <div className="flex items-center justify-between border-b border-line px-6 py-4 md:px-8">
           <h2 id="res-title" className="text-[20px] font-bold">
             {draft.id ? "Editar reserva" : "Nova reserva"} · {f.kind === "Reuniões" ? "Reunião" : "Treinamento"}
@@ -165,7 +165,7 @@ function ReservaModal({ draft, all, onSave, onClose }: { draft: Draft; all: Rese
           <p className="text-[14px] text-ink-soft">Solicitante: <strong className="text-ink">{f.requester}</strong></p>
         </div>
         <div className="flex justify-end gap-3 border-t border-line px-6 py-4 md:px-8">
-          <button type="button" onClick={onClose} className="h-11 rounded-xl border border-line bg-white px-5 text-[16px] font-bold hover:bg-surface">Fechar</button>
+          <button type="button" onClick={onClose} className="h-11 rounded-xl border border-line bg-paper px-5 text-[16px] font-bold hover:bg-surface">Fechar</button>
           <button type="submit" className="h-11 rounded-xl bg-brand px-6 text-[16px] font-bold text-white transition hover:bg-brand-dark">Salvar</button>
         </div>
       </form>
@@ -313,16 +313,16 @@ export function ReservasView() {
   return (
     <div className="space-y-6">
       <div>
-        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Diversos" }, { label: "Reservas de Salas" }]} />
+        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Agenda" }, { label: "Reservas de Salas" }]} />
         <h1 className="mt-3 flex items-center gap-3 text-[32px] font-extrabold leading-none tracking-tight">
           <DoorOpen className="size-8 text-brand" strokeWidth={1.8} /> Reservas de Salas
         </h1>
         <p className="mt-2 text-[16px] text-ink-soft">Reserve salas de reunião e de treinamento e acompanhe suas reservas.</p>
       </div>
 
-      <section className="overflow-hidden rounded-3xl border border-white bg-white/90 shadow-card">
+      <section className="overflow-hidden rounded-3xl border border-paper bg-paper/90 shadow-card">
         <div className="flex flex-wrap items-center justify-between gap-4 px-6 pt-6">
-          <div role="radiogroup" aria-label="Tipo de reserva" className="inline-flex gap-1 rounded-2xl border border-line bg-white p-1">
+          <div role="radiogroup" aria-label="Tipo de reserva" className="inline-flex gap-1 rounded-2xl border border-line bg-paper p-1">
             {kinds.map((k) => (
               <button
                 key={k}

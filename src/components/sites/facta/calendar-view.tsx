@@ -94,7 +94,7 @@ function seeds(): Ev[] {
 
 /* ---------- formulário (modal) ---------- */
 
-const control = "h-11 w-full rounded-xl border bg-white px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
+const control = "h-11 w-full rounded-xl border bg-paper px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
 
 function EventModal({ draft, onSave, onDelete, onClose }: { draft: Draft; onSave: (d: Draft) => void; onDelete?: () => void; onClose: () => void }) {
   const [f, setF] = useState<Draft>(draft);
@@ -149,7 +149,7 @@ function EventModal({ draft, onSave, onDelete, onClose }: { draft: Draft; onSave
         aria-labelledby="cal-modal-title"
         noValidate
         onSubmit={submit}
-        className="max-h-[94vh] w-full max-w-[860px] overflow-y-auto rounded-[28px] bg-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] [animation:facta-pop_.25s_ease-out] motion-reduce:[animation:none]"
+        className="max-h-[94vh] w-full max-w-[860px] overflow-y-auto rounded-[28px] bg-paper shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] [animation:facta-pop_.25s_ease-out] motion-reduce:[animation:none]"
       >
         <div className="flex items-center justify-between border-b border-line px-6 py-4 md:px-8">
           <h2 id="cal-modal-title" className="text-[20px] font-bold">
@@ -181,7 +181,7 @@ function EventModal({ draft, onSave, onDelete, onClose }: { draft: Draft; onSave
             </div>
             <div>
               <label htmlFor="cal-desc" className="mb-1 block text-[14px] font-semibold">Descrição</label>
-              <textarea id="cal-desc" value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} rows={4} placeholder="Detalhes, local, link da reunião…" className="w-full resize-y rounded-xl border border-line bg-white p-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15" />
+              <textarea id="cal-desc" value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} rows={4} placeholder="Detalhes, local, link da reunião…" className="w-full resize-y rounded-xl border border-line bg-paper p-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15" />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -212,7 +212,7 @@ function EventModal({ draft, onSave, onDelete, onClose }: { draft: Draft; onSave
             <p className="mb-3 text-[14px] text-ink-soft">Com que frequência se repete.</p>
             <div className="grid grid-cols-2 gap-2">
               {REPEATS.map((r) => (
-                <label key={r.value} className="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-line bg-white px-3 text-[14px] has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:font-bold has-[:checked]:text-brand has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand">
+                <label key={r.value} className="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-line bg-paper px-3 text-[14px] has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:font-bold has-[:checked]:text-brand has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand">
                   <input type="radio" name="cal-repeat" value={r.value} checked={f.repeat === r.value} onChange={() => setF({ ...f, repeat: r.value })} className="sr-only" />
                   {r.label}
                 </label>
@@ -230,7 +230,7 @@ function EventModal({ draft, onSave, onDelete, onClose }: { draft: Draft; onSave
             <span />
           )}
           <div className="flex gap-3">
-            <button type="button" onClick={onClose} className="h-11 rounded-xl border border-line bg-white px-5 text-[16px] font-bold hover:bg-surface">
+            <button type="button" onClick={onClose} className="h-11 rounded-xl border border-line bg-paper px-5 text-[16px] font-bold hover:bg-surface">
               Fechar
             </button>
             <button type="submit" className="h-11 rounded-xl bg-brand px-6 text-[16px] font-bold text-white transition hover:bg-brand-dark">
@@ -245,7 +245,7 @@ function EventModal({ draft, onSave, onDelete, onClose }: { draft: Draft; onSave
 
 /* ---------- tela ---------- */
 
-const card = "rounded-3xl border border-white bg-white/90 shadow-card";
+const card = "rounded-3xl border border-paper bg-paper/90 shadow-card";
 
 export function CalendarView() {
   const [events, setEvents] = useState<Ev[]>([]);
@@ -378,7 +378,7 @@ export function CalendarView() {
   const tpl = { gridTemplateColumns: `56px repeat(${cols.length}, minmax(0, 1fr))` };
 
   const seg = "h-9 coarse:h-11 rounded-lg px-4 text-[14px] font-bold transition-colors motion-reduce:transition-none";
-  const navBtn = "flex size-10 coarse:size-11 items-center justify-center rounded-xl border border-line bg-white text-ink-soft hover:bg-brand-soft hover:text-brand";
+  const navBtn = "flex size-10 coarse:size-11 items-center justify-center rounded-xl border border-line bg-paper text-ink-soft hover:bg-brand-soft hover:text-brand";
 
   const selEvents = eventsOn(sel);
 
@@ -386,7 +386,7 @@ export function CalendarView() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Diversos" }, { label: "Calendário de Compromissos" }]} />
+          <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Agenda" }, { label: "Calendário de Compromissos" }]} />
           <h1 className="mt-3 flex items-center gap-3 text-[32px] font-extrabold leading-none tracking-tight">
             <CalendarDays className="size-8 text-brand" strokeWidth={1.8} /> Calendário de Compromissos
           </h1>
@@ -407,14 +407,14 @@ export function CalendarView() {
               <button type="button" onClick={() => shift(1)} aria-label="Próximo" className={navBtn}>
                 <ChevronRight className="size-5" />
               </button>
-              <button type="button" onClick={goToday} className="h-10 coarse:h-11 rounded-xl border border-line bg-white px-4 text-[14px] font-bold text-brand hover:bg-brand-soft">
+              <button type="button" onClick={goToday} className="h-10 coarse:h-11 rounded-xl border border-line bg-paper px-4 text-[14px] font-bold text-brand hover:bg-brand-soft">
                 Hoje
               </button>
             </div>
             <h2 aria-live="polite" className="min-w-0 flex-1 text-[20px] font-bold">{title}</h2>
             <div role="group" aria-label="Visualização" className="flex gap-1 rounded-xl border border-line bg-surface p-1">
               {([["month", "Mês"], ["week", "Semana"], ["day", "Dia"]] as const).map(([v, l]) => (
-                <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={cn(seg, view === v ? "bg-brand text-white shadow-sm" : "text-ink-soft hover:bg-white")}>
+                <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={cn(seg, view === v ? "bg-brand text-white shadow-sm" : "text-ink-soft hover:bg-paper")}>
                   {l}
                 </button>
               ))}
@@ -528,7 +528,7 @@ export function CalendarView() {
           <section className={cn(card, "p-5")} aria-labelledby="next-title">
             <h2 id="next-title" className="text-[12px] font-bold uppercase tracking-wider text-ink-soft">Próximo compromisso</h2>
             {next ? (
-              <button type="button" onClick={() => openEdit(next.ev)} className="mt-3 block w-full rounded-2xl border border-line bg-white p-4 text-left transition-colors hover:border-brand/40">
+              <button type="button" onClick={() => openEdit(next.ev)} className="mt-3 block w-full rounded-2xl border border-line bg-paper p-4 text-left transition-colors hover:border-brand/40">
                 <span className={cn("mb-3 block h-1.5 rounded-full", COLORS[next.ev.color].dot)} />
                 <span className="block text-[20px] font-bold leading-tight">{next.ev.title}</span>
                 <span className="mt-2 flex items-center gap-2 text-[14px] text-ink-soft">
@@ -553,7 +553,7 @@ export function CalendarView() {
                 <h2 id="day-title" className="text-[20px] font-bold">Compromissos</h2>
                 <p className="text-[14px] text-ink-soft">{cap(longDate(sel))}</p>
               </div>
-              <button type="button" onClick={() => openNew(sel)} aria-label="Adicionar compromisso neste dia" className="flex size-10 coarse:size-11 items-center justify-center rounded-full border border-line bg-white text-brand hover:bg-brand-soft">
+              <button type="button" onClick={() => openNew(sel)} aria-label="Adicionar compromisso neste dia" className="flex size-10 coarse:size-11 items-center justify-center rounded-full border border-line bg-paper text-brand hover:bg-brand-soft">
                 <Plus className="size-5" />
               </button>
             </div>
@@ -561,7 +561,7 @@ export function CalendarView() {
               <ul className="mt-4 space-y-2.5">
                 {selEvents.map((e) => (
                   <li key={e.id}>
-                    <button type="button" onClick={() => openEdit(e)} className="flex w-full gap-3 rounded-2xl border border-line bg-white p-3 text-left transition-colors hover:border-brand/40">
+                    <button type="button" onClick={() => openEdit(e)} className="flex w-full gap-3 rounded-2xl border border-line bg-paper p-3 text-left transition-colors hover:border-brand/40">
                       <span className={cn("w-1 shrink-0 rounded-full", COLORS[e.color].dot)} />
                       <span className="min-w-0 flex-1">
                         <span className="block text-[12px] font-bold text-ink-soft">{e.time || "Dia todo"}{e.repeat !== "none" && ` · ${repeatLabel(e.repeat)}`}</span>

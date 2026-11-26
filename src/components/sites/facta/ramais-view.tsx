@@ -22,7 +22,7 @@ const initialsOf = (name: string) => {
 function Card({ p, onCopy, copied }: { p: Ramal; onCopy: (text: string, what: string) => void; copied: string }) {
   const Icon = p.kind === "Loja" ? Store : Building2;
   return (
-    <li className="rounded-2xl border border-line bg-white p-4 shadow-sm transition-colors hover:border-brand/40 motion-reduce:transition-none">
+    <li className="rounded-2xl border border-line bg-paper p-4 shadow-sm transition-colors hover:border-brand/40 motion-reduce:transition-none">
       <div className="flex items-start gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[14px] font-bold text-brand">{initialsOf(p.name)}</span>
         <div className="min-w-0 flex-1">
@@ -104,14 +104,14 @@ export function RamaisView() {
   return (
     <div className="space-y-6">
       <div>
-        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Diversos" }, { label: "Buscar Colaborador" }]} />
+        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Pessoas" }, { label: "Buscar Colaborador" }]} />
         <h1 className="mt-3 flex items-center gap-3 text-[32px] font-extrabold leading-none tracking-tight">
           <BookUser className="size-8 text-brand" strokeWidth={1.8} /> Buscar Colaborador
         </h1>
         <p className="mt-2 text-[16px] text-ink-soft">Encontre o ramal e o e-mail de qualquer pessoa da empresa.</p>
       </div>
 
-      <section className="overflow-hidden rounded-3xl border border-white bg-white/90 shadow-card">
+      <section className="overflow-hidden rounded-3xl border border-paper bg-paper/90 shadow-card">
         <div className="flex flex-wrap items-center gap-4 bg-navy px-6 py-5">
           <label className="flex h-12 w-full max-w-[520px] items-center gap-3 rounded-xl border border-white/15 bg-white/10 px-4 text-white focus-within:bg-white/15">
             <Search className="size-5 shrink-0" />
@@ -142,7 +142,7 @@ export function RamaisView() {
         )}
 
         <div className="flex flex-wrap items-center justify-between gap-4 px-6 pt-5">
-          <div role="radiogroup" aria-label="Tipo de unidade" className="inline-flex gap-1 rounded-2xl border border-line bg-white p-1">
+          <div role="radiogroup" aria-label="Tipo de unidade" className="inline-flex gap-1 rounded-2xl border border-line bg-paper p-1">
             {kinds.map((k) => (
               <button
                 key={k}
@@ -178,7 +178,7 @@ export function RamaisView() {
             <div className="py-12 text-center">
               <p className="text-[16px] font-bold">Ninguém encontrado</p>
               <p className="mt-1 text-[14px] text-ink-soft">Confira a grafia do nome ou remova a busca e os filtros.</p>
-              <button type="button" onClick={() => { setQ(""); setKind("Todos"); reset(); }} className="mt-4 inline-flex h-11 items-center gap-2 rounded-xl border border-line bg-white px-5 text-[14px] font-bold hover:bg-brand-soft">
+              <button type="button" onClick={() => { setQ(""); setKind("Todos"); reset(); }} className="mt-4 inline-flex h-11 items-center gap-2 rounded-xl border border-line bg-paper px-5 text-[14px] font-bold hover:bg-brand-soft">
                 Limpar busca e filtros
               </button>
             </div>
@@ -191,7 +191,7 @@ export function RamaisView() {
               </ul>
               {shown < rows.length && (
                 <div className="mt-6 flex justify-center">
-                  <button type="button" onClick={() => setShown((n) => n + STEP)} className="flex h-12 items-center gap-2 rounded-xl border border-line bg-white px-6 text-[16px] font-bold hover:bg-brand-soft">
+                  <button type="button" onClick={() => setShown((n) => n + STEP)} className="flex h-12 items-center gap-2 rounded-xl border border-line bg-paper px-6 text-[16px] font-bold hover:bg-brand-soft">
                     Mostrar mais ({rows.length - shown} restantes)
                   </button>
                 </div>

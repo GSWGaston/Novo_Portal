@@ -115,7 +115,7 @@ export function HistoricoView() {
 
   const header = (
     <div className="mt-5">
-      <div role="tablist" aria-label="Tipo de histórico" className="inline-flex gap-1 rounded-2xl border border-line bg-white p-1 shadow-sm">
+      <div role="tablist" aria-label="Tipo de histórico" className="inline-flex gap-1 rounded-2xl border border-line bg-paper p-1 shadow-sm">
         {tabs.map((t) => (
           <button
             key={t.id}

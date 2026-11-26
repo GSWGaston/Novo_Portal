@@ -29,7 +29,7 @@ import { cn } from "@/lib/utils";
 import { Select as Dropdown } from "./select";
 import { dashboardByScope, idleTickets, urgentTicket, type Scope } from "./data";
 
-const card = "rounded-3xl border border-white bg-white/90 shadow-card";
+const card = "rounded-3xl border border-paper bg-paper/90 shadow-card";
 
 export function Breadcrumb({ trail }: { trail: { label: string; href?: string }[] }) {
   return (
@@ -145,7 +145,7 @@ export function DashboardView() {
             </Link>
           </header>
           <div className="p-4">
-            <div className="rounded-2xl border border-danger/25 bg-danger-soft/60 p-4">
+            <Link href={`/solicitacoes/${urgentTicket.code}`} className="block rounded-2xl border border-danger/25 bg-danger-soft/60 p-4 transition-colors hover:border-danger/50 hover:bg-danger-soft motion-reduce:transition-none">
               <p className="flex items-center gap-3 text-[20px] font-bold">
                 #{urgentTicket.code}
                 <span className="rounded-md bg-danger-ink px-2 py-0.5 text-[14px] text-white">{urgentTicket.priority}</span>
@@ -155,7 +155,7 @@ export function DashboardView() {
                 <span className="flex items-center gap-2"><Monitor className="size-4" /> {urgentTicket.sector}</span>
                 <span className="flex items-center gap-2"><Calendar className="size-4" /> Aberto em {urgentTicket.opened}</span>
               </p>
-            </div>
+            </Link>
           </div>
         </section>
 
@@ -169,12 +169,14 @@ export function DashboardView() {
               Ver todos <ArrowRight className="size-4" />
             </Link>
           </header>
-          <ul className="divide-y divide-line px-5 py-2">
+          <ul className="divide-y divide-line px-3 py-2">
             {idleTickets.map((t) => (
-              <li key={t.code} className="flex items-center gap-4 py-2.5">
-                <span className="w-[96px] text-[18px] font-bold">#{t.code}</span>
-                <span className="flex-1 text-[16px]">{t.text}</span>
-                <span className="rounded-lg bg-danger-soft px-3 py-1 text-[16px] font-bold text-danger-ink">{t.days} dias</span>
+              <li key={t.code}>
+                <Link href={`/solicitacoes/${t.code}`} className="flex items-center gap-4 rounded-xl px-2 py-2.5 transition-colors hover:bg-brand-soft motion-reduce:transition-none">
+                  <span className="w-[96px] text-[18px] font-bold">#{t.code}</span>
+                  <span className="flex-1 text-[16px]">{t.text}</span>
+                  <span className="rounded-lg bg-danger-soft px-3 py-1 text-[16px] font-bold text-danger-ink">{t.days} dias</span>
+                </Link>
               </li>
             ))}
           </ul>
@@ -190,7 +192,7 @@ export function DashboardView() {
             {d.reasons.map((r) => (
               <li key={r.label} className="grid grid-cols-[minmax(120px,200px)_1fr_40px] items-center gap-4 rounded-lg px-1 py-1.5 text-[16px]">
                 <span>{r.label}</span>
-                <span className="h-3 rounded-full bg-[#e7edf6]">
+                <span className="h-3 rounded-full bg-[#e7edf6] dark:bg-line">
                   <span className="block h-full rounded-full bg-brand" style={{ width: `${(r.value / max) * 100}%` }} />
                 </span>
                 <span className="text-right font-bold">{r.value}</span>
@@ -199,11 +201,12 @@ export function DashboardView() {
           </ul>
         </section>
 
-        <section className={card}>
+        <section className={cn(card, "flex flex-col")}>
           <h2 className="flex items-center gap-2.5 border-b border-line px-6 py-3 text-[20px] font-bold">
             <Zap className="size-6 text-brand" /> Acesso rápido
           </h2>
-          <ul className="divide-y divide-line px-3 py-2">
+          {/* as linhas dividem a altura do bloco (que acompanha o card ao lado) */}
+          <ul className="flex flex-1 flex-col divide-y divide-line px-3 py-2 [&>li]:flex [&>li]:flex-1 [&>li>*]:flex-1">
             {[
               { label: "Nova solicitação", icon: Plus, href: "/solicitacoes/nova" },
               { label: "Pendentes no setor", icon: ListChecks, href: "/solicitacoes/setores" },

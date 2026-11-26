@@ -8,9 +8,9 @@ import { Select } from "./select";
 import { Breadcrumb } from "./dashboard-view";
 import { currentUser } from "./data";
 
-const card = "rounded-3xl border border-white bg-white/90 shadow-card";
+const card = "rounded-3xl border border-paper bg-paper/90 shadow-card";
 const control =
-  "h-11 w-full rounded-xl border bg-white px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15 disabled:cursor-not-allowed disabled:bg-surface disabled:text-ink-soft";
+  "h-11 w-full rounded-xl border bg-paper px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15 disabled:cursor-not-allowed disabled:bg-surface disabled:text-ink-soft";
 
 const requesterOptions = [`15166 - ${currentUser.name.toUpperCase()}`];
 const forOptions = ["Para mim", "Para outro colaborador"];
@@ -118,7 +118,7 @@ export function NewRequestForm() {
             <Link href="/solicitacoes/setores" className="flex h-11 items-center gap-2 rounded-xl bg-brand px-5 text-[14px] font-bold text-white hover:bg-brand-dark">
               <ExternalLink className="size-4" /> Ver pendentes no setor
             </Link>
-            <button type="button" onClick={reset} className="flex h-11 items-center gap-2 rounded-xl border border-line bg-white px-5 text-[14px] font-bold hover:bg-brand-soft">
+            <button type="button" onClick={reset} className="flex h-11 items-center gap-2 rounded-xl border border-line bg-paper px-5 text-[14px] font-bold hover:bg-brand-soft">
               <Plus className="size-4" /> Abrir outra solicitação
             </button>
           </div>
@@ -163,7 +163,7 @@ export function NewRequestForm() {
               </legend>
               <div className="flex flex-wrap gap-3">
                 {areas.map((a) => (
-                  <label key={a} className="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-line bg-white px-4 text-[14px] font-semibold transition-colors hover:bg-brand-soft has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:text-brand has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand motion-reduce:transition-none">
+                  <label key={a} className="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-line bg-paper px-4 text-[14px] font-semibold transition-colors hover:bg-brand-soft has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:text-brand has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand motion-reduce:transition-none">
                     <input
                       type="radio"
                       name="area"
@@ -224,7 +224,7 @@ export function NewRequestForm() {
               >
                 <Upload className="size-6 text-ink-soft" />
                 <p className="text-[14px] text-ink-soft">Arraste arquivos aqui ou</p>
-                <button type="button" onClick={() => fileInput.current?.click()} className="flex h-11 items-center gap-2 rounded-xl border border-line bg-white px-4 text-[14px] font-bold hover:bg-brand-soft">
+                <button type="button" onClick={() => fileInput.current?.click()} className="flex h-11 items-center gap-2 rounded-xl border border-line bg-paper px-4 text-[14px] font-bold hover:bg-brand-soft">
                   <Paperclip className="size-4" /> Selecionar arquivos
                 </button>
                 <input ref={fileInput} type="file" multiple className="sr-only" tabIndex={-1} aria-label="Selecionar arquivos" onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} />
@@ -232,7 +232,7 @@ export function NewRequestForm() {
               {files.length > 0 && (
                 <ul className="mt-3 space-y-2">
                   {files.map((f, i) => (
-                    <li key={`${f.name}-${i}`} className="flex items-center gap-3 rounded-xl border border-line bg-white px-3 py-2 text-[14px]">
+                    <li key={`${f.name}-${i}`} className="flex items-center gap-3 rounded-xl border border-line bg-paper px-3 py-2 text-[14px]">
                       <Paperclip className="size-4 shrink-0 text-ink-soft" />
                       <span className="min-w-0 flex-1 truncate">{f.name}</span>
                       <span className="text-[12px] text-ink-soft">{f.size < 1048576 ? `${Math.max(1, Math.round(f.size / 1024))} KB` : `${(f.size / 1048576).toFixed(1)} MB`}</span>
@@ -252,12 +252,12 @@ export function NewRequestForm() {
         <h2 className="border-b border-line px-6 py-4 text-[20px] font-bold">Descrição</h2>
         <div className="p-6">
           <label htmlFor="description" className="sr-only">Descrição da solicitação</label>
-          <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={8} placeholder="Descreva a solicitação: o que acontece, desde quando e o que já foi tentado." className="w-full resize-y rounded-2xl border border-line bg-white p-4 text-[16px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15" />
+          <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={8} placeholder="Descreva a solicitação: o que acontece, desde quando e o que já foi tentado." className="w-full resize-y rounded-2xl border border-line bg-paper p-4 text-[16px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15" />
         </div>
       </section>
 
       <div className="flex flex-wrap justify-end gap-3">
-        <Link href="/solicitacoes" className="flex h-12 items-center gap-2 rounded-xl border border-line bg-white px-6 text-[16px] font-bold hover:bg-brand-soft">
+        <Link href="/solicitacoes" className="flex h-12 items-center gap-2 rounded-xl border border-line bg-paper px-6 text-[16px] font-bold hover:bg-brand-soft">
           <Undo2 className="size-4" /> Voltar
         </Link>
         <button type="submit" className="flex h-12 items-center gap-2 rounded-xl bg-brand px-6 text-[16px] font-bold text-white transition-colors hover:bg-brand-dark motion-reduce:transition-none">

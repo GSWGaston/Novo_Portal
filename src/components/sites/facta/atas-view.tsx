@@ -29,7 +29,7 @@ const atas: Ata[] = [
 ];
 
 const br = (s: string) => s.split("-").reverse().join("/");
-const field = "h-11 w-full rounded-xl border border-line bg-white px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
+const field = "h-11 w-full rounded-xl border border-line bg-paper px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
 
 export function AtasView() {
   const [cat, setCat] = useState("");
@@ -72,14 +72,14 @@ export function AtasView() {
   return (
     <div className="space-y-6">
       <div>
-        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Diversos" }, { label: "Atas de Reunião" }]} />
+        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Agenda" }, { label: "Atas de Reunião" }]} />
         <h1 className="mt-3 flex items-center gap-3 text-[32px] font-extrabold leading-none tracking-tight">
           <ClipboardList className="size-8 text-brand" strokeWidth={1.8} /> Atas de Reunião
         </h1>
         <p className="mt-2 text-[16px] text-ink-soft">Pesquise atas por categoria, título ou participante.</p>
       </div>
 
-      <form onSubmit={submit} className="rounded-3xl border border-white bg-white/90 p-6 shadow-card">
+      <form onSubmit={submit} className="rounded-3xl border border-paper bg-paper/90 p-6 shadow-card">
         <div className="grid gap-5 md:grid-cols-3">
           <div>
             <span id="a-cat" className="mb-1 block text-[14px] font-semibold">Categoria</span>
@@ -98,7 +98,7 @@ export function AtasView() {
           <button type="submit" className="flex h-11 items-center gap-2 rounded-xl bg-navy px-6 text-[14px] font-bold text-white hover:bg-ink">
             <Search className="size-4" /> Pesquisar
           </button>
-          <button type="button" onClick={clear} className="h-11 rounded-xl border border-line bg-white px-6 text-[14px] font-bold hover:bg-surface">
+          <button type="button" onClick={clear} className="h-11 rounded-xl border border-line bg-paper px-6 text-[14px] font-bold hover:bg-surface">
             Limpar
           </button>
         </div>
@@ -113,7 +113,7 @@ export function AtasView() {
           // Com pesquisa ativa, os grupos com resultado ficam abertos.
           const expanded = searching ? g.items.length > 0 : !!open[g.name];
           return (
-            <section key={g.name} className="overflow-hidden rounded-3xl border border-white bg-white/90 shadow-card">
+            <section key={g.name} className="overflow-hidden rounded-3xl border border-paper bg-paper/90 shadow-card">
               <h2>
                 <button type="button" aria-expanded={expanded} aria-controls={`atas-${g.name}`} onClick={() => setOpen({ ...open, [g.name]: !expanded })} disabled={searching} className="flex min-h-14 w-full items-center gap-3 px-6 py-3 text-left disabled:cursor-default">
                   <span className="text-[16px] font-bold">{g.name}</span>
@@ -124,7 +124,7 @@ export function AtasView() {
               {expanded && (
                 <ul id={`atas-${g.name}`} className="grid gap-3 border-t border-line p-6 sm:grid-cols-2 2xl:grid-cols-3">
                   {g.items.map((a) => (
-                    <li key={a.id} className="flex items-start gap-3 rounded-2xl border border-line bg-white p-4 shadow-sm">
+                    <li key={a.id} className="flex items-start gap-3 rounded-2xl border border-line bg-paper p-4 shadow-sm">
                       <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand">
                         <FileText className="size-5" />
                       </span>
@@ -147,7 +147,7 @@ export function AtasView() {
           );
         })}
         {searching && total === 0 && (
-          <div className="rounded-3xl border border-dashed border-line bg-white/70 p-10 text-center">
+          <div className="rounded-3xl border border-dashed border-line bg-paper/70 p-10 text-center">
             <FileText className="mx-auto size-8 text-ink-mute" />
             <p className="mt-2 text-[16px] font-bold">Nenhuma ata encontrada</p>
             <p className="text-[14px] text-ink-soft">Tente outros termos ou clique em Limpar.</p>
