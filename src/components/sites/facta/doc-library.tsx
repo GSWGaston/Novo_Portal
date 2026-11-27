@@ -1,9 +1,13 @@
 "use client";
 
-import { Download, FileImage, FileSpreadsheet, FileText, Presentation, Search } from "lucide-react";
+import { BookOpenText, Download, FileImage, FileSpreadsheet, FileText, Presentation, Search } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Breadcrumb } from "./dashboard-view";
+import { PdfReader } from "./pdf-reader";
+
+/** Enquanto os arquivos reais não estão conectados, o leitor abre um PDF de demonstração. */
+const DEMO_PDF = "/sites/facta/em-foco/demo.pdf";
 
 export type DocType = "pdf" | "doc" | "xls" | "ppt" | "img";
 /** Uma string é um PDF. */
@@ -36,6 +40,7 @@ export function DocLibrary({ trail, title, icon, intro, searchLabel, groups, cat
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("");
   const [toast, setToast] = useState("");
+  const [reading, setReading] = useState<string | null>(null);
 
   const words = norm(q).split(/\s+/).filter(Boolean);
   const shown = groups
@@ -99,29 +104,39 @@ export function DocLibrary({ trail, title, icon, intro, searchLabel, groups, cat
               const t = TYPES[type];
               const Icon = t.icon;
               return (
-                <li key={`${name}-${i}`}>
-                  <button
-                    type="button"
-                    onClick={() => download(name, type)}
-                    aria-label={`Baixar ${t.label}: ${name}`}
-                    className="group flex h-full w-full flex-col gap-3 rounded-2xl border border-line bg-paper p-4 text-left shadow-sm transition-colors hover:border-brand/40 hover:bg-brand-soft/40 motion-reduce:transition-none"
-                  >
-                    <span className="flex items-start gap-3">
-                      <span className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl", t.tone)}>
-                        <Icon className="size-5" />
-                      </span>
-                      <span className="min-w-0 flex-1 text-[16px] font-bold leading-snug">{name}</span>
+                <li key={`${name}-${i}`} className="flex h-full flex-col gap-3 rounded-2xl border border-line bg-paper p-4 shadow-sm transition-colors hover:border-brand/40 motion-reduce:transition-none">
+                  <span className="flex items-start gap-3">
+                    <span className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl", t.tone)}>
+                      <Icon className="size-5" />
                     </span>
-                    <span className="mt-auto flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-ink-soft group-hover:text-brand">
-                      <Download className="size-4" /> Baixar {t.label}
-                    </span>
-                  </button>
+                    <span className="min-w-0 flex-1 text-[16px] font-bold leading-snug">{name}</span>
+                  </span>
+                  <span className="mt-auto flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setReading(name)}
+                      className="flex h-10 coarse:h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-4 text-[14px] font-bold text-white hover:bg-brand-dark"
+                    >
+                      <BookOpenText className="size-4" /> Ler documento
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => download(name, type)}
+                      aria-label={`Baixar ${t.label}: ${name}`}
+                      title={`Baixar ${t.label}`}
+                      className="flex size-10 coarse:size-11 shrink-0 items-center justify-center rounded-xl border border-[#c9d5ea] dark:border-line bg-paper text-ink-soft hover:bg-brand-soft hover:text-brand"
+                    >
+                      <Download className="size-4" />
+                    </button>
+                  </span>
                 </li>
               );
             })}
           </ul>
         </section>
       ))}
+
+      {reading && <PdfReader src={DEMO_PDF} title={reading} onClose={() => setReading(null)} />}
 
       <p role="status" aria-live="polite" className={cn("fixed bottom-6 left-1/2 z-[70] max-w-[90vw] -translate-x-1/2 rounded-xl bg-navy px-5 py-3 text-[14px] font-semibold text-white shadow-lg transition-opacity motion-reduce:transition-none", toast ? "opacity-100" : "pointer-events-none opacity-0")}>
         {toast}

@@ -20,9 +20,13 @@ import {
   RefreshCw,
   Search,
   X,
+  BrushCleaning,
+  Square,
+  SquareCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ORIGIN_KEY, readSession, writeSession } from "./use-stored";
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "./date-picker";
@@ -114,9 +118,12 @@ export function PriorityPill({ p }: { p: Ticket["priority"] }) {
   );
 }
 
+const STORE_KEY = "facta-lista:setores";
+
 export function TicketsView() {
   const router = useRouter();
-  const [q, setQ] = useState(useSearchParams().get("q") ?? "");
+  const urlQ = useSearchParams().get("q");
+  const [q, setQ] = useState(urlQ ?? "");
   const [exact, setExact] = useState(false);
   const [open, setOpen] = useState(false);
   const [more, setMore] = useState(false);
@@ -129,6 +136,24 @@ export function TicketsView() {
   const [picked, setPicked] = useState<number[]>([]);
   const [dragging, setDragging] = useState<number | null>(null);
   const [over, setOver] = useState<number | null>(null);
+  const [ready, setReady] = useState(false);
+
+  // volta com a busca e os filtros aplicados (voltar do navegador, trilha ou botão Voltar)
+  useEffect(() => {
+    const s = readSession<{ q: string; exact: boolean; applied: Filters; sort: { key: SortKey; dir: 1 | -1 }; page: number; size: number }>(STORE_KEY);
+    if (s) {
+       
+      if (urlQ === null) setQ(s.q);
+      setExact(s.exact); setApplied(s.applied); setDraft(s.applied); setSort(s.sort); setPage(s.page); setSize(s.size);
+       
+    }
+    setReady(true);
+    writeSession(ORIGIN_KEY, { label: "Setores", href: "/solicitacoes/setores" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (ready) writeSession(STORE_KEY, { q, exact, applied, sort, page, size });
+  }, [ready, q, exact, applied, sort, page, size]);
 
   const [announce, setAnnounce] = useState("");
   const touching = useRef(false);
@@ -221,6 +246,8 @@ export function TicketsView() {
     setDraft(empty);
     apply(empty);
   };
+  const hasFilters = chips.length > 0 || q.trim() !== "";
+  const clearEverything = () => { setQ(""); setExact(false); clearAll(); };
   const th = (key: SortKey, label: string, cls = "") => (
     <th scope="col" className={cn("px-2.5 py-4 text-left text-[14px] font-bold", cls)} aria-sort={sort.key === key ? (sort.dir === 1 ? "ascending" : "descending") : "none"}>
       <button type="button" className="inline-flex items-center gap-1 hover:text-brand coarse:min-h-11" onClick={() => setSort((s) => ({ key, dir: s.key === key ? (-s.dir as 1 | -1) : 1 }))}>
@@ -240,7 +267,7 @@ export function TicketsView() {
 
       <section className="overflow-hidden rounded-3xl border border-paper bg-paper/90 shadow-card">
         <div className="flex flex-wrap items-center gap-4 bg-navy px-6 py-5">
-          <label className="flex h-12 w-full max-w-[520px] items-center gap-3 rounded-xl border border-white/15 bg-white/10 px-4 text-white focus-within:bg-white/15">
+          <label className="flex h-12 w-full min-w-[240px] flex-1 sm:w-auto max-w-[520px] items-center gap-3 rounded-xl border border-white/15 bg-white/10 px-4 text-white focus-within:bg-white/15">
             <Search className="size-5 shrink-0" />
             <input
               value={q}
@@ -261,8 +288,13 @@ export function TicketsView() {
               exact ? "border-paper bg-paper text-navy" : "border-white/25 bg-white/10 text-white hover:bg-white/20",
             )}
           >
-            <Check className={cn("size-4", !exact && "opacity-0")} /> Busca exata
+            {exact ? <SquareCheck className="size-4" /> : <Square className="size-4" />} Busca exata
           </button>
+          {hasFilters && (
+            <button type="button" onClick={clearEverything} aria-label="Limpar busca e filtros" title="Limpar busca e filtros" className="flex size-12 items-center justify-center rounded-xl border border-white/25 bg-white/10 text-white hover:bg-white/20">
+              <BrushCleaning className="size-5" />
+            </button>
+          )}
           <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)} className="flex h-12 items-center gap-2 rounded-xl bg-brand px-5 text-[16px] font-bold text-white hover:bg-brand-dark">
             <Filter className="size-4" /> Filtros <ChevronDown className={cn("size-4 transition motion-reduce:transition-none", open && "rotate-180")} />
           </button>
@@ -287,7 +319,7 @@ export function TicketsView() {
               </div>
             )}
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <button type="button" aria-expanded={more} onClick={() => setMore((m) => !m)} className="flex h-11 items-center gap-1.5 text-[14px] font-bold text-brand">
+              <button type="button" aria-expanded={more} onClick={() => setMore((m) => !m)} className="flex h-11 items-center gap-2 rounded-xl border border-[#c9d5ea] dark:border-line bg-paper px-5 text-[14px] font-bold hover:bg-surface">
                 {more ? "Menos filtros" : "Mais filtros"} <ChevronDown className={cn("size-4 transition motion-reduce:transition-none", more && "rotate-180")} />
               </button>
               <div className="flex gap-3">

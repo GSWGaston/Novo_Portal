@@ -1,3 +1,8 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { ConveniosMedicos } from "./convenios-medicos-view";
 import { ArrowUpRight, BadgeCheck, GraduationCap, HeartHandshake } from "lucide-react";
 import Link from "next/link";
 import { Breadcrumb } from "./dashboard-view";
@@ -126,18 +131,51 @@ function Card({ c }: { c: Convenio }) {
   );
 }
 
+const tipos = [
+  { id: "educacional", label: "Educacional", intro: "Descontos de instituições parceiras para colaboradores Facta. Veja quanto é o desconto e como comprovar o vínculo." },
+  { id: "medico", label: "Médico", intro: "Planos de saúde e odontológicos oferecidos aos colaboradores. Cada card resume o plano; o documento completo pode ser lido ou baixado." },
+] as const;
+type Tipo = (typeof tipos)[number]["id"];
+
 export function ConveniosView() {
+  const [tipo, setTipo] = useState<Tipo>("educacional");
+  // ?tipo=medico abre direto na aba Médico (e a aba escolhida fica no endereço ao voltar)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (new URLSearchParams(window.location.search).get("tipo") === "medico") setTipo("medico");
+  }, []);
+  const escolher = (t: Tipo) => {
+    setTipo(t);
+    window.history.replaceState(null, "", t === "medico" ? "?tipo=medico" : window.location.pathname);
+  };
+  const atual = tipos.find((t) => t.id === tipo)!;
+
   return (
     <div className="space-y-6">
       <div>
-        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Recursos Humanos" }, { label: "Programas Institucionais" }, { label: "Convênios" }]} />
+        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Recursos Humanos" }, { label: "Convênios" }]} />
         <h1 className="mt-3 flex items-center gap-3 text-[32px] font-extrabold leading-none tracking-tight">
           <HeartHandshake className="size-8 text-brand" strokeWidth={1.8} /> Convênios
         </h1>
-        <p className="mt-2 max-w-[720px] text-[16px] text-ink-soft">Descontos de instituições parceiras para colaboradores Facta. Veja quanto é o desconto e como comprovar o vínculo.</p>
+        <p className="mt-2 max-w-[760px] text-[16px] text-ink-soft">{atual.intro}</p>
+        <div role="radiogroup" aria-label="Tipo de convênio" className="mt-5 inline-flex gap-1 rounded-2xl border border-line bg-paper p-1">
+          {tipos.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              role="radio"
+              aria-checked={tipo === t.id}
+              onClick={() => escolher(t.id)}
+              className={cn("h-11 rounded-xl px-6 text-[14px] font-bold transition-colors motion-reduce:transition-none", tipo === t.id ? "bg-navy text-white" : "text-ink-soft hover:bg-brand-soft hover:text-ink")}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {groups.map((g) => (
+      {tipo === "medico" && <ConveniosMedicos />}
+      {tipo === "educacional" && groups.map((g) => (
         <section key={g.title} aria-labelledby={`cv-${g.title}`}>
           <h2 id={`cv-${g.title}`} className="mb-4 flex items-center gap-2.5 text-[20px] font-bold">
             <g.icon className="size-5 text-brand" /> {g.title}

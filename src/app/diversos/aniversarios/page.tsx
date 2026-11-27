@@ -1,12 +1,6 @@
-import { AniversariosView } from "@/components/sites/facta/aniversarios-view";
-import { AppShell } from "@/components/sites/facta/app-shell";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Relação de Aniversários" };
-
+/** A relação de aniversários agora fica em Colaboradores (filtro por mês). */
 export default function AniversariosPage() {
-  return (
-    <AppShell variant="app">
-      <AniversariosView />
-    </AppShell>
-  );
+  redirect("/diversos/colaboradores");
 }

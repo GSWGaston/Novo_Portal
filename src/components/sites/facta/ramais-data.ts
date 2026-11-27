@@ -8,6 +8,8 @@ export type Ramal = {
   ramal: string;
   /** dd/mm/aaaa; vazio quando o ramal ainda não foi informado */
   updated: string;
+  /** dd/mm, data de nascimento (sem ano) */
+  birth: string;
 };
 
 export const matrizSectors = ["Apoio Jurídico", "Suporte Informática", "Recursos Humanos", "Controladoria", "Facta Financeira", "Comercial"];
@@ -33,6 +35,7 @@ export const ramais: Ramal[] = Array.from({ length: 64 }, (_, i) => {
     kind,
     email: `${slug(name)}${i % 4 === 0 ? "" : `${i}`}@exemplo.com.br`,
     ramal: hasRamal ? String(2000 + ((i * 137) % 7000)) : "",
+    birth: `${pad(1 + ((i * 11) % 28))}/${pad(1 + ((i * 5) % 12))}`,
     updated: hasRamal ? `${pad(1 + ((i * 5) % 28))}/${pad(1 + ((i * 7) % 12))}/${2024 + (i % 3)}` : "",
   };
 }).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));

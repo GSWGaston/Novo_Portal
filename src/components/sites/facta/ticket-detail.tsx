@@ -1,5 +1,6 @@
 "use client";
 
+import { ORIGIN_KEY, readSession } from "./use-stored";
 import {
   Calendar,
   Check,
@@ -19,7 +20,7 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Select } from "./select";
 import { Breadcrumb } from "./dashboard-view";
@@ -69,6 +70,12 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
   const [entries, setEntries] = useState<HistoryEntry[]>(() => historyFor(ticket));
   const [fresh, setFresh] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [origin, setOrigin] = useState({ label: "Setores", href: "/solicitacoes/setores" });
+  useEffect(() => {
+    const o = readSession<{ label: string; href: string }>(ORIGIN_KEY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (o) setOrigin(o);
+  }, []);
   const [status, setStatus] = useState<Status>(ticket.status);
   const [priority, setPriority] = useState<Priority>(ticket.priority);
   const [owner, setOwner] = useState(ticket.owner || currentUser.name);
@@ -124,7 +131,7 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Solicitações", href: "/solicitacoes" }, { label: "Setores", href: "/solicitacoes/setores" }, { label: `Chamado #${ticket.code}` }]} />
+      <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Solicitações", href: "/solicitacoes" }, { label: origin.label, href: origin.href }, { label: `Chamado #${ticket.code}` }]} />
 
       <header className={cn(card, "p-6")}>
         <div className="flex flex-wrap items-start justify-between gap-5">
@@ -304,7 +311,7 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
               <button type="submit" className="h-11 rounded-xl bg-brand px-8 text-[16px] font-bold text-white transition hover:bg-brand-dark">
                 Gravar
               </button>
-              <Link href="/solicitacoes/setores" className="flex h-11 items-center rounded-xl border border-line bg-paper px-8 text-[16px] font-bold hover:bg-surface">
+              <Link href={origin.href} className="flex h-11 items-center rounded-xl border border-line bg-paper px-8 text-[16px] font-bold hover:bg-surface">
                 Voltar
               </Link>
             </div>

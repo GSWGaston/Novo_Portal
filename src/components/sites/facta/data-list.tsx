@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Filter, Layers, Search, X, type LucideIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Filter, Layers, Search, X, type LucideIcon, BrushCleaning } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ORIGIN_KEY, readSession, writeSession } from "./use-stored";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "./date-picker";
 import { Select } from "./select";
@@ -28,6 +29,8 @@ export type Col<T> = { key: string; label: string; sort?: (r: T) => string | num
 export type FilterDef<T> = { key: string; label: string; kind: "select" | "text" | "from" | "to"; options?: string[]; test: (r: T, value: string) => boolean; more?: boolean };
 
 type Props<T> = {
+  /** chave para lembrar busca e filtros ao sair e voltar; padrão: o título */
+  persistKey?: string;
   title: string;
   icon: LucideIcon;
   trail: { label: string; href?: string }[];
@@ -51,7 +54,7 @@ type Props<T> = {
 
 const input = "h-11 w-full rounded-xl border border-line bg-paper px-3 text-[14px] outline-none focus:border-brand focus:ring-4 focus:ring-brand/15";
 
-export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHref, rowClass, columns, search, placeholder, filters, toggle, header, defaultSort, noun }: Props<T>) {
+export function DataList<T>({ persistKey, title, icon: Icon, trail, rows: all, rowKey, rowHref, rowClass, columns, search, placeholder, filters, toggle, header, defaultSort, noun }: Props<T>) {
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
   const [more, setMore] = useState(false);
@@ -61,6 +64,25 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHr
   const [sort, setSort] = useState(defaultSort ?? { key: "", dir: 1 as 1 | -1 });
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
+  const [ready, setReady] = useState(false);
+
+  const storeKey = `facta-lista:${persistKey ?? title}`;
+  // volta com a busca e os filtros aplicados (voltar do navegador, trilha ou botão Voltar)
+  useEffect(() => {
+    const s = readSession<{ q: string; applied: Record<string, string>; showAll: boolean; sort: { key: string; dir: 1 | -1 }; page: number; size: number }>(storeKey);
+    if (s) {
+       
+      setQ(s.q); setApplied(s.applied); setDraft(s.applied); setShowAll(s.showAll); setSort(s.sort); setPage(s.page); setSize(s.size);
+       
+    }
+    setReady(true);
+    // o chamado aberto a partir daqui sabe para qual lista voltar
+    writeSession(ORIGIN_KEY, { label: trail[trail.length - 1].label, href: window.location.pathname });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeKey]);
+  useEffect(() => {
+    if (ready) writeSession(storeKey, { q, applied, showAll, sort, page, size });
+  }, [ready, storeKey, q, applied, showAll, sort, page, size]);
 
   const rows = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -92,6 +114,8 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHr
     setDraft({});
     apply({});
   };
+  const hasFilters = chips.length > 0 || q.trim() !== "";
+  const clearEverything = () => { setQ(""); clearAll(); };
 
   const router = useRouter();
   const field = (f: FilterDef<T>) => (
@@ -133,23 +157,30 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHr
 
       <section className="overflow-hidden rounded-3xl border border-paper bg-paper/90 shadow-card">
         <div className="flex flex-wrap items-center gap-4 bg-navy px-6 py-5">
-          <label className="flex h-12 w-full max-w-[520px] items-center gap-3 rounded-xl border border-white/15 bg-white/10 px-4 text-white focus-within:bg-white/15">
+          <label className="flex h-12 w-full min-w-[240px] flex-1 sm:w-auto max-w-[520px] items-center gap-3 rounded-xl border border-white/15 bg-white/10 px-4 text-white focus-within:bg-white/15">
             <Search className="size-5 shrink-0" />
             <input value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} placeholder={placeholder} className="w-full bg-transparent text-[16px] outline-none placeholder:text-white/70" />
           </label>
+          <div className="ml-auto flex flex-wrap items-center gap-4">
           {toggle && (
             <button
               type="button"
               aria-pressed={showAll}
               onClick={() => { setShowAll((v) => !v); setPage(1); }}
-              className={cn("ml-auto flex h-12 items-center gap-2 rounded-xl border px-5 text-[16px] font-bold transition-colors motion-reduce:transition-none", showAll ? "border-paper bg-paper text-navy" : "border-white/25 bg-white/10 text-white hover:bg-white/20")}
+              className={cn("flex h-12 items-center gap-2 rounded-xl border px-5 text-[16px] font-bold transition-colors motion-reduce:transition-none", showAll ? "border-paper bg-paper text-navy" : "border-white/25 bg-white/10 text-white hover:bg-white/20")}
             >
               {toggle.label}
             </button>
           )}
-          <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)} className={cn("flex h-12 items-center gap-2 rounded-xl bg-brand px-5 text-[16px] font-bold text-white hover:bg-brand-dark", !toggle && "ml-auto")}>
+          {hasFilters && (
+            <button type="button" onClick={clearEverything} aria-label="Limpar busca e filtros" title="Limpar busca e filtros" className="flex size-12 items-center justify-center rounded-xl border border-white/25 bg-white/10 text-white hover:bg-white/20">
+              <BrushCleaning className="size-5" />
+            </button>
+          )}
+          <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)} className="flex h-12 items-center gap-2 rounded-xl bg-brand px-5 text-[16px] font-bold text-white hover:bg-brand-dark">
             <Filter className="size-4" /> Filtros <ChevronDown className={cn("size-4 transition motion-reduce:transition-none", open && "rotate-180")} />
           </button>
+          </div>
         </div>
 
         {open && (
@@ -158,7 +189,7 @@ export function DataList<T>({ title, icon: Icon, trail, rows: all, rowKey, rowHr
             {more && extra.length > 0 && <div className="mt-5 grid gap-x-5 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">{extra.map(field)}</div>}
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               {extra.length > 0 ? (
-                <button type="button" aria-expanded={more} onClick={() => setMore((m) => !m)} className="flex h-11 items-center gap-1.5 text-[14px] font-bold text-brand">
+                <button type="button" aria-expanded={more} onClick={() => setMore((m) => !m)} className="flex h-11 items-center gap-2 rounded-xl border border-[#c9d5ea] dark:border-line bg-paper px-5 text-[14px] font-bold hover:bg-surface">
                   {more ? "Menos filtros" : "Mais filtros"} <ChevronDown className={cn("size-4 transition motion-reduce:transition-none", more && "rotate-180")} />
                 </button>
               ) : (

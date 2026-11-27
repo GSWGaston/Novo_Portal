@@ -239,12 +239,19 @@ export function AppHeader({ variant, menus = navMenus }: Props) {
             {open === "bell" && (
               <div className={cn(panel, "right-0 w-[min(340px,90vw)]")}>
                 <p className="px-3 pb-1 pt-2 text-[12px] font-bold uppercase tracking-wider text-ink-soft">Atualizações</p>
-                {notifications.map((n) => (
-                  <div key={n.id} className="rounded-xl px-3 py-2 hover:bg-brand-soft">
-                    <p className="text-[14px] font-semibold">{n.title}</p>
-                    <p className="text-[12px] text-ink-soft">{n.when}</p>
-                  </div>
-                ))}
+                {notifications.map((n) =>
+                  n.href ? (
+                    <Link key={n.id} href={n.href} onClick={() => setOpen(null)} className="block rounded-xl px-3 py-2 hover:bg-brand-soft">
+                      <p className="text-[14px] font-semibold">{n.title}</p>
+                      <p className="text-[12px] text-ink-soft">{n.when}</p>
+                    </Link>
+                  ) : (
+                    <div key={n.id} className="rounded-xl px-3 py-2">
+                      <p className="text-[14px] font-semibold">{n.title}</p>
+                      <p className="text-[12px] text-ink-soft">{n.when}</p>
+                    </div>
+                  ),
+                )}
               </div>
             )}
           </div>

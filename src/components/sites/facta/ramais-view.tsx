@@ -1,6 +1,6 @@
 "use client";
 
-import { BookUser, Building2, Check, ChevronDown, Filter, Mail, Phone, PhoneOff, Search, Store, X } from "lucide-react";
+import { BookUser, Cake, Building2, Check, ChevronDown, Filter, Mail, Phone, PhoneOff, Search, Store, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "./date-picker";
@@ -8,6 +8,10 @@ import { Select } from "./select";
 import { parseBR } from "./data-list";
 import { Breadcrumb } from "./dashboard-view";
 import { lojaSectors, matrizSectors, ramais, type Ramal } from "./ramais-data";
+
+const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+const MESES_LONGOS = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+const birthLabel = (b: string) => `${Number(b.slice(0, 2))} ${MESES[Number(b.slice(3, 5)) - 1]}`;
 
 const kinds = ["Todos", "Matriz", "Loja"] as const;
 const STEP = 12;
@@ -23,13 +27,13 @@ function Card({ p, onCopy, copied }: { p: Ramal; onCopy: (text: string, what: st
   const Icon = p.kind === "Loja" ? Store : Building2;
   return (
     <li className="rounded-2xl border border-line bg-paper p-4 shadow-sm transition-colors hover:border-brand/40 motion-reduce:transition-none">
-      <div className="flex items-start gap-3">
+      <div className="flex items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[14px] font-bold text-brand">{initialsOf(p.name)}</span>
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-[16px] font-bold leading-tight" title={p.name}>{p.name}</h2>
           <p className="truncate text-[14px] text-ink-soft" title={p.role}>{p.role}</p>
         </div>
-        <div className="flex shrink-0 items-center gap-1" title={p.updated ? `Atualizado em ${p.updated}` : undefined}>
+        <div className="flex shrink-0 flex-col items-stretch gap-1.5" title={p.updated ? `Atualizado em ${p.updated}` : undefined}>
           {p.ramal ? (
             <button
               type="button"
@@ -44,6 +48,9 @@ function Card({ p, onCopy, copied }: { p: Ramal; onCopy: (text: string, what: st
           ) : (
             <span className="flex min-h-9 coarse:min-h-11 items-center gap-2 rounded-lg bg-surface px-3 py-1 text-[14px] font-semibold text-ink-soft ring-1 ring-line"><PhoneOff className="size-4" /> Sem ramal</span>
           )}
+          <span className="flex items-center gap-2 rounded-md bg-brand-soft px-3 py-1 text-[13px] font-medium text-ink" title={`Aniversário: ${p.birth}`}>
+            <Cake className="size-4 shrink-0 text-brand" aria-hidden /> <span className="sr-only">Aniversário:</span>{birthLabel(p.birth)}
+          </span>
         </div>
       </div>
 
@@ -74,6 +81,8 @@ export function RamaisView() {
   const [to, setTo] = useState("");
   const [open, setOpen] = useState(false);
   const [shown, setShown] = useState(STEP);
+  const [month, setMonth] = useState(-1);
+  const [bdayOpen, setBdayOpen] = useState(false);
   const [toast, setToast] = useState("");
   const [copied, setCopied] = useState("");
 
@@ -81,18 +90,20 @@ export function RamaisView() {
 
   const rows = useMemo(() => {
     const term = q.trim().toLowerCase();
-    return ramais.filter((p) => {
+    const list = ramais.filter((p) => {
       if (kind !== "Todos" && p.kind !== kind) return false;
       if (sector && p.sector !== sector) return false;
       if (term && !`${p.name} ${p.role} ${p.sector} ${p.email} ${p.ramal}`.toLowerCase().includes(term)) return false;
       if (from && (!p.updated || parseBR(p.updated) < new Date(`${from}T00:00`).getTime())) return false;
       if (to && (!p.updated || parseBR(p.updated) > new Date(`${to}T23:59`).getTime())) return false;
+      if (month >= 0 && Number(p.birth.slice(3, 5)) - 1 !== month) return false;
       return true;
     });
-  }, [q, kind, sector, from, to]);
+    return month >= 0 ? [...list].sort((a, b) => a.birth.localeCompare(b.birth)) : list;
+  }, [q, kind, sector, from, to, month]);
 
-  const active = [sector && `Setor: ${sector}`, from && `De: ${from.split("-").reverse().join("/")}`, to && `Até: ${to.split("-").reverse().join("/")}`].filter(Boolean) as string[];
-  const reset = () => { setSector(""); setFrom(""); setTo(""); setShown(STEP); };
+  const active = [month >= 0 && `Aniversário: ${MESES_LONGOS[month]}`, sector && `Setor: ${sector}`, from && `De: ${from.split("-").reverse().join("/")}`, to && `Até: ${to.split("-").reverse().join("/")}`].filter(Boolean) as string[];
+  const reset = () => { setMonth(-1); setSector(""); setFrom(""); setTo(""); setShown(STEP); };
 
   const copy = (text: string, what: string) => {
     navigator.clipboard?.writeText(text).catch(() => {});
@@ -104,9 +115,9 @@ export function RamaisView() {
   return (
     <div className="space-y-6">
       <div>
-        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Pessoas" }, { label: "Buscar Colaborador" }]} />
+        <Breadcrumb trail={[{ label: "Dashboard", href: "/" }, { label: "Colaboradores" }]} />
         <h1 className="mt-3 flex items-center gap-3 text-[32px] font-extrabold leading-none tracking-tight">
-          <BookUser className="size-8 text-brand" strokeWidth={1.8} /> Buscar Colaborador
+          <BookUser className="size-8 text-brand" strokeWidth={1.8} /> Colaboradores
         </h1>
         <p className="mt-2 text-[16px] text-ink-soft">Encontre o ramal e o e-mail de qualquer pessoa da empresa.</p>
       </div>
@@ -117,7 +128,47 @@ export function RamaisView() {
             <Search className="size-5 shrink-0" />
             <input value={q} onChange={(e) => { setQ(e.target.value); setShown(STEP); }} placeholder="Buscar por nome, ramal, cargo ou e-mail" className="w-full bg-transparent text-[16px] outline-none placeholder:text-white/70" />
           </label>
-          <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)} className="ml-auto flex h-12 items-center gap-2 rounded-xl bg-brand px-5 text-[16px] font-bold text-white hover:bg-brand-dark">
+          <div className="relative ml-auto">
+            <button
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={bdayOpen}
+              aria-label="Aniversariantes do mês"
+              title="Aniversariantes do mês"
+              onClick={() => setBdayOpen((o) => !o)}
+              className={cn("flex size-12 items-center justify-center rounded-xl text-white", month >= 0 ? "bg-brand hover:bg-brand-dark" : "border border-white/15 bg-white/10 hover:bg-white/15")}
+            >
+              <Cake className="size-5" />
+            </button>
+            {bdayOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setBdayOpen(false)} aria-hidden />
+                <div role="menu" aria-label="Escolha o mês" className="absolute right-0 top-14 z-20 w-72 rounded-2xl border border-line bg-paper p-3 text-ink shadow-card" onKeyDown={(e) => e.key === "Escape" && setBdayOpen(false)}>
+                  <p className="px-1 pb-2 text-[14px] font-bold">Aniversariantes de</p>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {MESES_LONGOS.map((m, i) => (
+                      <button
+                        key={m}
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={month === i}
+                        onClick={() => { setMonth(i); setShown(STEP); setBdayOpen(false); }}
+                        className={cn("h-10 rounded-lg text-[14px] font-semibold", month === i ? "bg-navy text-white" : i === new Date().getMonth() ? "bg-brand-soft text-brand hover:bg-brand/15" : "hover:bg-brand-soft")}
+                      >
+                        {m.slice(0, 3)}
+                      </button>
+                    ))}
+                  </div>
+                  {month >= 0 && (
+                    <button type="button" onClick={() => { setMonth(-1); setShown(STEP); setBdayOpen(false); }} className="mt-2 w-full rounded-lg py-2 text-[14px] font-bold text-brand hover:bg-brand-soft">
+                      Mostrar todos os meses
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+          <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)} className="flex h-12 items-center gap-2 rounded-xl bg-brand px-5 text-[16px] font-bold text-white hover:bg-brand-dark">
             <Filter className="size-4" /> Filtros <ChevronDown className={cn("size-4 transition motion-reduce:transition-none", open && "rotate-180")} />
           </button>
         </div>

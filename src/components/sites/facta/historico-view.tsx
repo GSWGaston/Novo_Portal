@@ -140,6 +140,7 @@ export function HistoricoView() {
       {tab === "chamados" ? (
         <DataList
           key="chamados"
+          persistKey="historico-chamados"
           title="Histórico"
           icon={History}
           trail={trail}
@@ -158,6 +159,7 @@ export function HistoricoView() {
       ) : (
         <DataList
           key="interacoes"
+          persistKey="historico-interacoes"
           title="Histórico"
           icon={History}
           trail={trail}

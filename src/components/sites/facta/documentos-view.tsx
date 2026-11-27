@@ -73,25 +73,7 @@ const groups: DocGroup[] = [
       word("Ficha de entrevista"),
     ],
   },
-  {
-    title: "Planos de Saúde",
-    items: [
-      "Odonto Qualimais - Unimed",
-      "Manual Unimed - App e guia médico",
-      word("Unimed - ER Serviços"),
-      word("Unimed - Ágil Promotora"),
-      word("Unimed - Pratical"),
-      word("Unimed - Facta Financeira"),
-      word("Unimed - Facta Intermediação"),
-      "Hospital Doctor Clin",
-      "Doctor Clin - Hospitalar",
-      "Doctor Clin - Ambulatorial",
-      "Doctor Clin - Carências hospitalar",
-      "Doctor Clin - Carências ambulatorial",
-      "Doctor Clin - Como agendar odonto no app",
-      "Doctor Clin - Especialidades do odonto",
-    ],
-  },
+
 ];
 
 export function DocumentosView() {

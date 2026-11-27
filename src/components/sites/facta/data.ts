@@ -87,21 +87,15 @@ export const navMenus: MenuItem[] = [
       { label: "Projetos", href: "/diversos/projetos" },
     ],
   },
-  {
-    label: "Pessoas",
-    items: [
-      { label: "Buscar Colaborador", href: "/diversos/colaboradores" },
-      { label: "Relação de Aniversários", href: "/diversos/aniversarios" },
-      soon("Apoio Facta"),
-    ],
-  },
+  { label: "Colaboradores", href: "/diversos/colaboradores" },
   {
     label: "Recursos Humanos",
     items: [
+      { label: "Convênios", href: "/rh/convenios" },
       { label: "T&D", href: "/rh/td" },
       soon("Folha Ponto"),
       { label: "Biblioteca", href: "/rh/biblioteca" },
-      { label: "Programas Institucionais", items: [{ label: "Convênios", href: "/rh/convenios" }, soon("Cidadania Empresarial"), { label: "Facta em Foco", href: "/rh/facta-em-foco" }, ...["Facta Forma", "Feito para você"].map(soon)] },
+      { label: "Programas Institucionais", items: [soon("Cidadania Empresarial"), { label: "Facta em Foco", href: "/rh/facta-em-foco" }, ...["Facta Forma", "Feito para você"].map(soon)] },
       { label: "Formulário de Feedback", items: [{ label: "Solicitar Feedback", href: "/rh/feedback/novo" }, { label: "Consultar Feedback", href: "/rh/feedback" }] },
     ],
   },
@@ -119,9 +113,9 @@ export const navMenus: MenuItem[] = [
   { label: "Ajuda", items: [{ label: "FAQ", href: "/ajuda/faq" }, { label: "Banco de Ideias", href: "/ajuda/ideias" }, { label: "Repositório", href: "/ajuda/repositorio" }] },
 ];
 
-export const notifications = [
-  { id: 1, title: "Chamado #1000201 foi atualizado", when: "há 5 min" },
-  { id: 2, title: "Chamado #1000202 aguarda sua validação", when: "há 1 h" },
+export const notifications: { id: number; title: string; when: string; href?: string }[] = [
+  { id: 1, title: "Chamado #1000201 foi atualizado", when: "há 5 min", href: "/solicitacoes/1000201" },
+  { id: 2, title: "Chamado #1000202 aguarda sua validação", when: "há 1 h", href: "/solicitacoes/1000202" },
   { id: 3, title: "Nova versão do portal disponível", when: "ontem" },
 ];
 

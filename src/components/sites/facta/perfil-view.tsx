@@ -24,6 +24,8 @@ type Perfil = {
   bairro: string;
   pcd: string;
   ramal: string;
+  /** usada para mostrar a mensalidade dos convênios médicos */
+  idade?: string;
   foto: string;
   etnia: string;
   estadoCivil: string;
@@ -59,7 +61,7 @@ const label = "mb-1 block text-[14px] font-semibold";
 const card = "rounded-3xl border border-paper bg-paper/90 p-5 shadow-card md:p-7";
 const Req = () => <span aria-hidden className="ml-0.5 text-danger-ink">*</span>;
 const Err = ({ m }: { m?: string }) => (m ? <p className="mt-1 text-[14px] font-medium text-danger-ink">{m}</p> : null);
-type Errors = Partial<Record<"email" | "celular" | "emTel1" | "emTel2" | "cep" | "etnia" | "estadoCivil" | "senhaAtual" | "senhaNova", string>>;
+type Errors = Partial<Record<"idade" | "email" | "celular" | "emTel1" | "emTel2" | "cep" | "etnia" | "estadoCivil" | "senhaAtual" | "senhaNova", string>>;
 
 function Section({ icon: Icon, title, children }: { icon: typeof Phone; title: string; children: React.ReactNode }) {
   return (
@@ -125,6 +127,7 @@ export function PerfilView() {
     e.preventDefault();
     const fone = (v: string) => (v && digits(v).length < 10 ? "Telefone incompleto." : undefined);
     const next: Errors = {
+      idade: f.idade && (Number(f.idade) < 14 || Number(f.idade) > 99) ? "Idade entre 14 e 99." : undefined,
       email: f.email && !/^\S+@\S+\.\S+$/.test(f.email) ? "E-mail inválido." : undefined,
       celular: fone(f.celular),
       emTel1: fone(f.emTel1),
@@ -185,8 +188,13 @@ export function PerfilView() {
             <button type="button" onClick={() => set("foto", "")} className="mt-2 text-[14px] font-bold text-danger-ink hover:underline">Remover foto</button>
           )}
         </div>
-        <div className="sm:w-[140px]">
+        <div className="flex gap-3 sm:w-[296px]">
+          <div className="w-[140px]">
+            <Field id="pf-idade" title="Idade" value={f.idade ?? ""} onChange={(v) => set("idade", digits(v).slice(0, 2))} err={err.idade} inputMode="numeric" placeholder="00" />
+          </div>
+          <div className="w-[140px]">
           <Field id="pf-ramal" title="Ramal" value={f.ramal} onChange={(v) => set("ramal", digits(v).slice(0, 5))} inputMode="numeric" placeholder="0000" />
+          </div>
         </div>
       </section>
 
